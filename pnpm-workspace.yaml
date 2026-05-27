@@ -1,6 +1,8 @@
 onlyBuiltDependencies:
   - '@bundled-es-modules/glob'
   - esbuild
+  - playwright-chromium
+  - protobufjs
   - sharp
   - style-dictionary
   - svelte-preprocess

@@ -14,7 +14,17 @@ export default defineConfig({
 		__VERSION__: JSON.stringify(version),
 		__TIMESTAMP__: JSON.stringify(timestamp)
 	},
-	plugins: [sveltekit(), dsv(), svg()],
+	plugins: [
+		sveltekit(),
+		dsv({
+			processRow: (row) => ({
+				...row,
+				year: +row.year,
+				value: +row.value
+			})
+		}),
+		svg()
+	],
 	resolve: {
 		alias: {
 			$actions: path.resolve("./src/actions"),
