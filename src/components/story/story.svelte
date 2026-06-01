@@ -87,7 +87,7 @@
 					<Plot
 						marginRight={12}
 						title="Percentage of reports that claim CBI for production volume"
-						height={chartHeight}
+						height={chartHeight - 75}
 						width={chartWidth}
 						grid
 						x={{
@@ -98,7 +98,7 @@
 							domain: yDomain.current,
 							tickSpacing: 60,
 							label: "↑ Percentage",
-							tickFormat: (d) => `%${d}`
+							tickFormat: (d) => `${d}%`
 						}}
 					>
 						<Line
@@ -156,7 +156,7 @@
 
 	.chart-container {
 		width: 92%;
-		height: 95%;
+		height: 100%;
 		margin: 0 auto;
 	}
 </style>
