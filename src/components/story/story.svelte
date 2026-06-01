@@ -24,15 +24,20 @@
 
 	let width = $state(1024);
 	let height = $state(800);
-	let chartWidth = $state(1024);
-	let chartHeight = $state(800);
+	let chartWidth = $state(400);
+	let chartHeight = $state(400);
 	let isMobile = $derived(width <= MOBILE_BREAKPOINT);
 	let headerH = $derived(isMobile ? HEADER_H.mobile : HEADER_H.desktop);
 	let footerH = $derived(footerState.visible ? FOOTER_H : 0);
 	let chapters = $derived(copy.story);
 	let step = $state(null);
 	const sortedData = rawData
-		.map((d) => ({ ...d, year: +d.year, value: +d.value }))
+		.map((d) => ({
+			...d,
+			year: +d.year,
+			value: +d.value,
+			date: new Date(+d.year, 0, 1)
+		}))
 		.sort((a, b) => a.name.localeCompare(b.name) || a.year - b.year);
 
 	const data = $derived(
@@ -78,19 +83,35 @@
 				bind:clientWidth={chartWidth}
 				bind:clientHeight={chartHeight}
 			>
-				<Plot
-					marginRight={12}
-					height={chartHeight}
-					width={chartWidth}
-					grid
-					y={{
-						domain: yDomain.current,
-						// tickSpacing: 120,
-						label: "↑ Percentage"
-					}}
-				>
-					<Line {data} x="year" y="value" z="name" stroke="name" />
-				</Plot>
+				{#if data?.length}
+					<Plot
+						marginRight={12}
+						title="Percentage of reports that claim CBI for production volume"
+						height={chartHeight}
+						width={chartWidth}
+						grid
+						x={{
+							type: "time",
+							label: "Year →"
+						}}
+						y={{
+							domain: yDomain.current,
+							tickSpacing: 60,
+							label: "↑ Percentage",
+							tickFormat: (d) => `%${d}`
+						}}
+					>
+						<Line
+							{data}
+							x="date"
+							y="value"
+							z="name"
+							stroke="name"
+							strokeWidth={3}
+							strokeOpacity={0.9}
+						/>
+					</Plot>
+				{/if}
 			</div>
 		</div>
 	</div>
