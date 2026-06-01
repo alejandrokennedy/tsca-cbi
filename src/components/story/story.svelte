@@ -24,6 +24,8 @@
 
 	let width = $state(1024);
 	let height = $state(800);
+	let chartWidth = $state(1024);
+	let chartHeight = $state(800);
 	let isMobile = $derived(width <= MOBILE_BREAKPOINT);
 	let headerH = $derived(isMobile ? HEADER_H.mobile : HEADER_H.desktop);
 	let footerH = $derived(footerState.visible ? FOOTER_H : 0);
@@ -71,18 +73,25 @@
 	>
 		<div class="layout-container">
 			<!-- Visualization goes here -->
-			<Plot
-				{height}
-				{width}
-				grid
-				y={{
-					domain: yDomain.current,
-					// tickSpacing: 120,
-					label: "↑ Percentage"
-				}}
+			<div
+				class="chart-container"
+				bind:clientWidth={chartWidth}
+				bind:clientHeight={chartHeight}
 			>
-				<Line {data} x="year" y="value" z="name" stroke="name" />
-			</Plot>
+				<Plot
+					marginRight={12}
+					height={chartHeight}
+					width={chartWidth}
+					grid
+					y={{
+						domain: yDomain.current,
+						// tickSpacing: 120,
+						label: "↑ Percentage"
+					}}
+				>
+					<Line {data} x="year" y="value" z="name" stroke="name" />
+				</Plot>
+			</div>
 		</div>
 	</div>
 	<!-- uncomment below to pull directly from gdoc on page reload -->
@@ -113,5 +122,20 @@
 		height: 100%;
 		width: 100%;
 		overflow: hidden;
+
+		/* Fallback for pre-2024 browsers (Flexbox) */
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+
+		/* Modern 2026 standard (Block layout centering) */
+		display: block;
+		align-content: center;
+	}
+
+	.chart-container {
+		width: 92%;
+		height: 95%;
+		margin: 0 auto;
 	}
 </style>
