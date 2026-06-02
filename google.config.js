@@ -7,5 +7,10 @@ export default [
 		id: "19JTp0cjIRFJrEy63tAfaNMuwFOJXJTc5nqv5EgKee1U",
 		gid: "0",
 		filepath: "src/data/data.csv"
+	},
+	{
+		id: "1PY2dhYzI3R5Hvn5yUNCnhx1dIOdiGhm7XfoDNqCeKZw",
+		gid: "0",
+		filepath: "src/data/industryNumber.csv"
 	}
 ];
