@@ -21,6 +21,12 @@
 	const HEADER_H = { mobile: 48, desktop: 65 };
 	const FOOTER_H = 54.6;
 	const MOBILE_BREAKPOINT = 768;
+	const COLORS = {
+		consumerAll: "#1b9e77",
+		industryAll: "#d95f02",
+		consumerTop: "#7570b3",
+		industryTop: "#e7298d"
+	};
 
 	let width = $state(1024);
 	let height = $state(800);
@@ -38,20 +44,12 @@
 			value: +d.value,
 			date: new Date(+d.year, 0, 1)
 		}))
-		.sort((a, b) => {
-			// const score = {
-			// 	consumerAll: 0,
-			// 	consumerTop: 1,
-			// 	industryAll: 2,
-			// 	industryTop: 3
-			// };
-			return (
-				a.name.localeCompare(b.name) || a.year - b.year
-				//  || score[a.name] - score[b.name]
-			);
-		});
+		.sort((a, b) => a.name.localeCompare(b.name) || a.year - b.year);
 
-	const allNames = [...new Set(sortedData.map((d) => d.name))];
+	const allNames = Object.keys(COLORS);
+	const LONG = Object.fromEntries(
+		sortedData.map((d) => [d.name, d.longName.trim()])
+	);
 
 	// Which series are visible at a given step. Single source of truth for both
 	// the data filter and the entrance animation below.
@@ -60,6 +58,8 @@
 		if (s < 2) return ["consumerAll", "industryAll"];
 		return allNames;
 	}
+
+	const visibleNames = $derived(namesForStep(step)); // your per-step subset
 
 	const data = $derived(
 		sortedData.filter((d) => namesForStep(step).includes(d.name))
@@ -134,14 +134,18 @@
 							label: "↑ Percentage",
 							tickFormat: (d) => `${d}%`
 						}}
-						color={{ legend: true }}
+						color={{
+							legend: true,
+							domain: visibleNames.map((n) => LONG[n]),
+							range: visibleNames.map((n) => COLORS[n])
+						}}
 					>
 						<Line
 							{data}
 							x="date"
 							y="value"
 							z="name"
-							stroke="name"
+							stroke={(d) => LONG[d.name]}
 							strokeWidth={3}
 							strokeOpacity={0.9}
 							lineClass={(d) =>
