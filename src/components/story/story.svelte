@@ -21,11 +21,19 @@
 	const HEADER_H = { mobile: 48, desktop: 65 };
 	const FOOTER_H = 54.6;
 	const MOBILE_BREAKPOINT = 768;
+	// Previous scheme (ColorBrewer Dark2) — uncomment to revert:
+	// const COLORS = {
+	// 	consumerAll: "#1b9e77",
+	// 	industryAll: "#d95f02",
+	// 	consumerTop: "#7570b3",
+	// 	industryTop: "#e7298d"
+	// };
+	// Current scheme (Tableau 10):
 	const COLORS = {
-		consumerAll: "#1b9e77",
-		industryAll: "#d95f02",
-		consumerTop: "#7570b3",
-		industryTop: "#e7298d"
+		consumerAll: "#4e79a7",
+		industryAll: "#f28e2b",
+		consumerTop: "#59a14f",
+		industryTop: "#e15759"
 	};
 
 	let width = $state(1024);
@@ -266,6 +274,15 @@
 		height: 100%;
 		margin: 0 auto;
 		font-family: Helvetica, Arial, sans-serif;
+	}
+
+	/* Match the subtitle to the static charts' title look. Global scoped.css
+	   styles `:where(.scrollo-story) h3` at 28px in the serif --font-body; this
+	   overrides it back to the clean sans-serif default (NumberCharts.svelte). */
+	.chart-container :global(.plot-header h3) {
+		font-family: Helvetica, Arial, sans-serif;
+		font-size: 1.17em;
+		font-weight: 700;
 	}
 
 	/* Lines tagged `draw-in` reveal from left to right as `--reveal` tweens

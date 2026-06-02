@@ -16,13 +16,9 @@ export default defineConfig({
 	},
 	plugins: [
 		sveltekit(),
-		dsv({
-			processRow: (row) => ({
-				...row,
-				year: +row.year,
-				value: +row.value
-			})
-		}),
+		// dsv parses CSVs into arrays of string-valued objects; each importing
+		// component coerces the fields it needs (see story.svelte, NumberCharts.svelte).
+		dsv(),
 		svg()
 	],
 	resolve: {
