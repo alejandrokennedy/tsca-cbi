@@ -55,6 +55,8 @@
 		z-index: var(--scrollo-foreground-z, 1);
 		width: var(--scrollo-foreground-width, 40vw);
 		max-width: var(--scrollo-foreground-max-width, 40rem);
+		/* Set to "auto" to center the column horizontally (matches mobile look) */
+		margin-inline: var(--scrollo-foreground-margin-inline, 0);
 	}
 
 	/* Step container - scroll timing & layout */
