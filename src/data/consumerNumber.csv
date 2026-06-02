@@ -1,13 +1,12 @@
-chemicalName,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023
-1-Bromopropane,4,4,4,4,6,6,6,5,3,3,3,4
-"1,4-Dioxane",1,1,1,1,4,4,4,4,2,2,2,2
-Perchloroethylene (PERC),12,11,11,11,15,15,16,15,18,18,18,18
-Asbestos,2,2,2,2,2,2,2,2,1,1,1,1
-Cyclic aliphatic bromide cluster (HBCD),4,4,4,4,1,1,1,0,0,0,0,0
-Cyclic aliphatic bromide cluster (HBCD),4,4,4,4,3,3,3,2,0,0,0,0
-Carbon tetrachloride,9,8,7,8,8,8,8,8,9,9,9,9
-Dichloromethane,15,15,15,17,19,19,19,19,22,22,22,20
-Trichloroethylene,11,10,10,11,8,8,9,8,9,9,10,9
-Pigment violet 29,2,2,2,2,3,3,3,3,3,3,3,3
-N-methylpyrrolidone,18,16,16,18,36,35,36,32,27,32,33,30
-Tremolite asbestos,0,0,0,0,0,0,0,0,0,0,0,0
+chemCode,chemicalName,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023
+106945,1-Bromopropane,4,4,4,4,6,6,6,5,3,3,3,4
+123911,"1,4-Dioxane",1,1,1,1,4,4,4,4,2,2,2,2
+127184,Perchloroethylene (PERC),12,11,11,11,15,15,16,15,18,18,18,18
+1332214,Asbestos ,2,2,2,2,2,2,2,2,1,1,1,1
+25637994,Cyclic aliphatic bromide cluster (HBCD) 1*,4,4,4,4,1,1,1,0,0,0,0,0
+3194556,Cyclic aliphatic bromide cluster (HBCD) 2*,4,4,4,4,3,3,3,2,0,0,0,0
+56235,Carbon tetrachloride,9,8,7,8,8,8,8,8,9,9,9,9
+75092,Dichloromethane,15,15,15,17,19,19,19,19,22,22,22,20
+79016,Trichloroethylene,11,10,10,11,8,8,9,8,9,9,10,9
+81334,Pigment violet 29,2,2,2,2,3,3,3,3,3,3,3,3
+872504,N-methylpyrrolidone,18,16,16,18,36,35,36,32,27,32,33,30

@@ -1,0 +1,133 @@
+name,longName,chemCode,year,num,perc
+bromopropane1,1-Bromopropane,106945,2012,4,44.44
+bromopropane1,1-Bromopropane,106945,2013,4,36.36
+bromopropane1,1-Bromopropane,106945,2014,4,33.33
+bromopropane1,1-Bromopropane,106945,2015,4,33.33
+bromopropane1,1-Bromopropane,106945,2016,6,75
+bromopropane1,1-Bromopropane,106945,2017,6,100
+bromopropane1,1-Bromopropane,106945,2018,6,100
+bromopropane1,1-Bromopropane,106945,2019,5,100
+bromopropane1,1-Bromopropane,106945,2020,3,75
+bromopropane1,1-Bromopropane,106945,2021,3,75
+bromopropane1,1-Bromopropane,106945,2022,3,75
+bromopropane1,1-Bromopropane,106945,2023,4,100
+dioxane14,"1,4-Dioxane",123911,2012,1,33.33
+dioxane14,"1,4-Dioxane",123911,2013,1,33.33
+dioxane14,"1,4-Dioxane",123911,2014,1,33.33
+dioxane14,"1,4-Dioxane",123911,2015,1,33.33
+dioxane14,"1,4-Dioxane",123911,2016,4,80
+dioxane14,"1,4-Dioxane",123911,2017,4,66.67
+dioxane14,"1,4-Dioxane",123911,2018,4,66.67
+dioxane14,"1,4-Dioxane",123911,2019,4,66.67
+dioxane14,"1,4-Dioxane",123911,2020,2,66.67
+dioxane14,"1,4-Dioxane",123911,2021,2,50
+dioxane14,"1,4-Dioxane",123911,2022,2,50
+dioxane14,"1,4-Dioxane",123911,2023,2,50
+perchloroethylenePerc,Perchloroethylene (PERC),127184,2012,12,63.16
+perchloroethylenePerc,Perchloroethylene (PERC),127184,2013,11,55
+perchloroethylenePerc,Perchloroethylene (PERC),127184,2014,11,57.89
+perchloroethylenePerc,Perchloroethylene (PERC),127184,2015,11,57.89
+perchloroethylenePerc,Perchloroethylene (PERC),127184,2016,15,78.95
+perchloroethylenePerc,Perchloroethylene (PERC),127184,2017,15,71.43
+perchloroethylenePerc,Perchloroethylene (PERC),127184,2018,16,72.73
+perchloroethylenePerc,Perchloroethylene (PERC),127184,2019,15,71.43
+perchloroethylenePerc,Perchloroethylene (PERC),127184,2020,18,75
+perchloroethylenePerc,Perchloroethylene (PERC),127184,2021,18,78.26
+perchloroethylenePerc,Perchloroethylene (PERC),127184,2022,18,78.26
+perchloroethylenePerc,Perchloroethylene (PERC),127184,2023,18,81.82
+asbestos,Asbestos,1332214,2012,2,100
+asbestos,Asbestos,1332214,2013,2,100
+asbestos,Asbestos,1332214,2014,2,100
+asbestos,Asbestos,1332214,2015,2,100
+asbestos,Asbestos,1332214,2016,2,100
+asbestos,Asbestos,1332214,2017,2,100
+asbestos,Asbestos,1332214,2018,2,100
+asbestos,Asbestos,1332214,2019,2,100
+asbestos,Asbestos,1332214,2020,1,100
+asbestos,Asbestos,1332214,2021,1,100
+asbestos,Asbestos,1332214,2022,1,100
+asbestos,Asbestos,1332214,2023,1,100
+cyclicAliphaticBromideClusterHbcd1,Cyclic aliphatic bromide cluster (HBCD) 1*,25637994,2012,4,100
+cyclicAliphaticBromideClusterHbcd1,Cyclic aliphatic bromide cluster (HBCD) 1*,25637994,2013,4,100
+cyclicAliphaticBromideClusterHbcd1,Cyclic aliphatic bromide cluster (HBCD) 1*,25637994,2014,4,100
+cyclicAliphaticBromideClusterHbcd1,Cyclic aliphatic bromide cluster (HBCD) 1*,25637994,2015,4,66.67
+cyclicAliphaticBromideClusterHbcd1,Cyclic aliphatic bromide cluster (HBCD) 1*,25637994,2016,1,100
+cyclicAliphaticBromideClusterHbcd1,Cyclic aliphatic bromide cluster (HBCD) 1*,25637994,2017,1,100
+cyclicAliphaticBromideClusterHbcd1,Cyclic aliphatic bromide cluster (HBCD) 1*,25637994,2018,1,100
+cyclicAliphaticBromideClusterHbcd1,Cyclic aliphatic bromide cluster (HBCD) 1*,25637994,2019,0,
+cyclicAliphaticBromideClusterHbcd1,Cyclic aliphatic bromide cluster (HBCD) 1*,25637994,2020,0,
+cyclicAliphaticBromideClusterHbcd1,Cyclic aliphatic bromide cluster (HBCD) 1*,25637994,2021,0,
+cyclicAliphaticBromideClusterHbcd1,Cyclic aliphatic bromide cluster (HBCD) 1*,25637994,2022,0,
+cyclicAliphaticBromideClusterHbcd1,Cyclic aliphatic bromide cluster (HBCD) 1*,25637994,2023,0,
+cyclicAliphaticBromideClusterHbcd2,Cyclic aliphatic bromide cluster (HBCD) 2*,3194556,2012,4,80
+cyclicAliphaticBromideClusterHbcd2,Cyclic aliphatic bromide cluster (HBCD) 2*,3194556,2013,4,80
+cyclicAliphaticBromideClusterHbcd2,Cyclic aliphatic bromide cluster (HBCD) 2*,3194556,2014,4,80
+cyclicAliphaticBromideClusterHbcd2,Cyclic aliphatic bromide cluster (HBCD) 2*,3194556,2015,4,66.67
+cyclicAliphaticBromideClusterHbcd2,Cyclic aliphatic bromide cluster (HBCD) 2*,3194556,2016,3,100
+cyclicAliphaticBromideClusterHbcd2,Cyclic aliphatic bromide cluster (HBCD) 2*,3194556,2017,3,100
+cyclicAliphaticBromideClusterHbcd2,Cyclic aliphatic bromide cluster (HBCD) 2*,3194556,2018,3,100
+cyclicAliphaticBromideClusterHbcd2,Cyclic aliphatic bromide cluster (HBCD) 2*,3194556,2019,2,100
+cyclicAliphaticBromideClusterHbcd2,Cyclic aliphatic bromide cluster (HBCD) 2*,3194556,2020,0,
+cyclicAliphaticBromideClusterHbcd2,Cyclic aliphatic bromide cluster (HBCD) 2*,3194556,2021,0,
+cyclicAliphaticBromideClusterHbcd2,Cyclic aliphatic bromide cluster (HBCD) 2*,3194556,2022,0,
+cyclicAliphaticBromideClusterHbcd2,Cyclic aliphatic bromide cluster (HBCD) 2*,3194556,2023,0,
+carbonTetrachloride,Carbon tetrachloride,56235,2012,9,100
+carbonTetrachloride,Carbon tetrachloride,56235,2013,8,100
+carbonTetrachloride,Carbon tetrachloride,56235,2014,7,100
+carbonTetrachloride,Carbon tetrachloride,56235,2015,8,100
+carbonTetrachloride,Carbon tetrachloride,56235,2016,8,100
+carbonTetrachloride,Carbon tetrachloride,56235,2017,8,100
+carbonTetrachloride,Carbon tetrachloride,56235,2018,8,100
+carbonTetrachloride,Carbon tetrachloride,56235,2019,8,100
+carbonTetrachloride,Carbon tetrachloride,56235,2020,9,100
+carbonTetrachloride,Carbon tetrachloride,56235,2021,9,100
+carbonTetrachloride,Carbon tetrachloride,56235,2022,9,100
+carbonTetrachloride,Carbon tetrachloride,56235,2023,9,100
+dichloromethane,Dichloromethane,75092,2012,15,62.5
+dichloromethane,Dichloromethane,75092,2013,15,55.56
+dichloromethane,Dichloromethane,75092,2014,15,57.69
+dichloromethane,Dichloromethane,75092,2015,17,62.96
+dichloromethane,Dichloromethane,75092,2016,19,61.29
+dichloromethane,Dichloromethane,75092,2017,19,57.58
+dichloromethane,Dichloromethane,75092,2018,19,51.35
+dichloromethane,Dichloromethane,75092,2019,19,55.88
+dichloromethane,Dichloromethane,75092,2020,22,66.67
+dichloromethane,Dichloromethane,75092,2021,22,64.71
+dichloromethane,Dichloromethane,75092,2022,22,59.46
+dichloromethane,Dichloromethane,75092,2023,20,51.28
+trichloroethylene,Trichloroethylene,79016,2012,11,73.33
+trichloroethylene,Trichloroethylene,79016,2013,10,52.63
+trichloroethylene,Trichloroethylene,79016,2014,10,52.63
+trichloroethylene,Trichloroethylene,79016,2015,11,55
+trichloroethylene,Trichloroethylene,79016,2016,8,47.06
+trichloroethylene,Trichloroethylene,79016,2017,8,47.06
+trichloroethylene,Trichloroethylene,79016,2018,9,45
+trichloroethylene,Trichloroethylene,79016,2019,8,47.06
+trichloroethylene,Trichloroethylene,79016,2020,9,60
+trichloroethylene,Trichloroethylene,79016,2021,9,52.94
+trichloroethylene,Trichloroethylene,79016,2022,10,52.63
+trichloroethylene,Trichloroethylene,79016,2023,9,64.29
+pigmentViolet29,Pigment violet 29,81334,2012,2,100
+pigmentViolet29,Pigment violet 29,81334,2013,2,100
+pigmentViolet29,Pigment violet 29,81334,2014,2,100
+pigmentViolet29,Pigment violet 29,81334,2015,2,100
+pigmentViolet29,Pigment violet 29,81334,2016,3,100
+pigmentViolet29,Pigment violet 29,81334,2017,3,100
+pigmentViolet29,Pigment violet 29,81334,2018,3,100
+pigmentViolet29,Pigment violet 29,81334,2019,3,100
+pigmentViolet29,Pigment violet 29,81334,2020,3,100
+pigmentViolet29,Pigment violet 29,81334,2021,3,100
+pigmentViolet29,Pigment violet 29,81334,2022,3,100
+pigmentViolet29,Pigment violet 29,81334,2023,3,100
+nMethylpyrrolidoneNmp,N-methylpyrrolidone (NMP),872504,2012,18,75
+nMethylpyrrolidoneNmp,N-methylpyrrolidone (NMP),872504,2013,16,41.03
+nMethylpyrrolidoneNmp,N-methylpyrrolidone (NMP),872504,2014,16,43.24
+nMethylpyrrolidoneNmp,N-methylpyrrolidone (NMP),872504,2015,18,40
+nMethylpyrrolidoneNmp,N-methylpyrrolidone (NMP),872504,2016,36,60
+nMethylpyrrolidoneNmp,N-methylpyrrolidone (NMP),872504,2017,35,67.31
+nMethylpyrrolidoneNmp,N-methylpyrrolidone (NMP),872504,2018,36,63.16
+nMethylpyrrolidoneNmp,N-methylpyrrolidone (NMP),872504,2019,32,60.38
+nMethylpyrrolidoneNmp,N-methylpyrrolidone (NMP),872504,2020,27,65.85
+nMethylpyrrolidoneNmp,N-methylpyrrolidone (NMP),872504,2021,32,64
+nMethylpyrrolidoneNmp,N-methylpyrrolidone (NMP),872504,2022,33,68.75
+nMethylpyrrolidoneNmp,N-methylpyrrolidone (NMP),872504,2023,30,71.43

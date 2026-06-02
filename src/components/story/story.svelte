@@ -67,6 +67,11 @@
 
 	const visibleNames = $derived(namesForStep(step)); // your per-step subset
 
+	// Has the first step fired yet? Single trigger for both the line draw-in
+	// and the legend swatch fade-in below. `null` = the reader hasn't reached
+	// any step, so the chart frame shows but the line + swatch stay hidden.
+	const started = $derived(step != null);
+
 	const data = $derived(
 		sortedData.filter((d) => namesForStep(step).includes(d.name))
 	);
@@ -85,18 +90,38 @@
 	// stroke-dashoffset via the `--reveal` custom prop so they sweep in.
 	const DRAW_DURATION = 2200;
 
+	// The step we last drew. Plain (non-reactive) on purpose: it's read by
+	// `enteringNames` but must NOT invalidate it (only `step` should), and it's
+	// committed in a post-effect below — after this tick's draw has consumed it.
+	// `undefined` = nothing rendered yet, so the first series still draws in.
+	let prevStep: number | null | undefined;
+
 	const enteringNames = $derived.by(() => {
+		// Before the first step nothing has entered yet.
+		if (!started) return [];
 		const current = namesForStep(step);
-		const previous = step == null ? [] : namesForStep(step - 1);
+		// Compare against where the user actually came from, not `step - 1`.
+		// Scrolling up to a lower step only *removes* series, so this set is
+		// empty and nothing redraws the wrong way on the way back up. Treating
+		// a `null` prev (pre-start) as "nothing shown" is what lets the very
+		// first series draw in on the null → step 0 transition.
+		const previous = prevStep == null ? [] : namesForStep(prevStep);
 		return current.filter((n) => !previous.includes(n));
 	});
 
-	const reveal = new Tween(1, { duration: DRAW_DURATION, easing: cubicInOut });
+	// Start hidden (0): combined with the `draw-in` class, a fully-wiped line.
+	const reveal = new Tween(0, { duration: DRAW_DURATION, easing: cubicInOut });
 
 	// Replay the draw whenever a new set of lines enters. Pure side-effect:
 	// reads `enteringNames`, drives the tween, assigns no state. Runs before
 	// paint (`pre`) so entering lines start hidden — no flash of the full line.
 	$effect.pre(() => {
+		// Before the first step: hold every line wiped out (reveal 0) and don't
+		// animate. They all carry `draw-in` until `started`, so this hides them.
+		if (!started) {
+			untrack(() => reveal.set(0, { duration: 0 }));
+			return;
+		}
 		if (!enteringNames.length) return;
 		untrack(() => {
 			reveal.set(0, { duration: 0 }); // synchronous reset → hidden
@@ -104,6 +129,14 @@
 				duration: prefersReducedMotion.current ? 0 : DRAW_DURATION
 			});
 		});
+	});
+
+	// Commit the current step as "previous" once this tick's draw has run.
+	// Post-effect (not `pre`) so it fires after `enteringNames` and the render
+	// have already read the old value; `prevStep` is plain, so this assignment
+	// doesn't retrigger the derived.
+	$effect(() => {
+		prevStep = step;
 	});
 
 	// Attachment for the chart-container: find SveltePlot's `.plot-header` and
@@ -139,6 +172,7 @@
 			<!-- Visualization goes here -->
 			<div
 				class="chart-container"
+				class:started
 				bind:clientWidth={chartWidth}
 				bind:clientHeight={chartHeight}
 				style:--reveal={reveal.current}
@@ -147,6 +181,7 @@
 				{#if data?.length}
 					<Plot
 						marginRight={12}
+						marginLeft={32}
 						subtitle="Percentage of reports that claim CBI for production volume"
 						height={chartHeight - plotHeaderH}
 						width={chartWidth}
@@ -176,7 +211,7 @@
 							strokeWidth={3}
 							strokeOpacity={0.9}
 							lineClass={(d) =>
-								enteringNames.includes(d.name) ? "draw-in" : ""}
+								!started || enteringNames.includes(d.name) ? "draw-in" : ""}
 						/>
 					</Plot>
 				{/if}
@@ -230,6 +265,7 @@
 		width: 92%;
 		height: 100%;
 		margin: 0 auto;
+		font-family: Helvetica, Arial, sans-serif;
 	}
 
 	/* Lines tagged `draw-in` reveal from left to right as `--reveal` tweens
@@ -237,5 +273,44 @@
 	.chart-container :global(.draw-in path) {
 		stroke-dasharray: 4000;
 		stroke-dashoffset: calc(4000 * (1 - var(--reveal, 1)));
+	}
+
+	/* Color legend. Two layers:
+	   1. Container gate: the whole legend is hidden until the first step. The
+	      `consumerAll` item is in the DOM from page load, so without this it
+	      would fade in at load instead of when the reader reaches step 0.
+	   2. Per-item entrance: each item (swatch + label) fades in when it mounts.
+	      SveltePlot's legend each-block is keyed by series name, so introducing
+	      a series adds *only* its node — already-visible items keep their nodes
+	      and never replay. Duration matches the gate so the first reveal and
+	      later introductions look identical. */
+	.chart-container :global(.color-legend) {
+		opacity: 0;
+		transition: opacity 600ms ease;
+	}
+
+	.chart-container.started :global(.color-legend) {
+		opacity: 1;
+	}
+
+	.chart-container :global(.color-legend .item) {
+		animation: legend-item-in 600ms ease both;
+	}
+
+	@keyframes -global-legend-item-in {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.chart-container :global(.color-legend),
+		.chart-container :global(.color-legend .item) {
+			transition: none;
+			animation: none;
+		}
 	}
 </style>
