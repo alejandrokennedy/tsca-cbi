@@ -32,6 +32,12 @@
 	let height = $state(800);
 	let chartWidth = $state(400);
 	let chartHeight = $state(400);
+	// SveltePlot renders the subtitle + color legend in a `.plot-header` block
+	// *above* the SVG, and the `height` prop only sizes the SVG. So the header
+	// eats into the available height — and it isn't constant (the legend wraps
+	// on narrow screens and grows as more series appear at later steps). We
+	// measure it live (see `measurePlotHeader` below) instead of hardcoding it.
+	let plotHeaderH = $state(75);
 	let isMobile = $derived(width <= MOBILE_BREAKPOINT);
 	let headerH = $derived(isMobile ? HEADER_H.mobile : HEADER_H.desktop);
 	let footerH = $derived(footerState.visible ? FOOTER_H : 0);
@@ -99,6 +105,26 @@
 			});
 		});
 	});
+
+	// Attachment for the chart-container: find SveltePlot's `.plot-header` and
+	// reserve its full footprint (its box + its `margin-top`, which
+	// offsetHeight excludes) so the SVG height tracks whatever space is left.
+	// The ResizeObserver refires when the legend wraps or the series count
+	// changes; reading `data?.length` re-runs the attachment if the Plot
+	// (re)mounts and the `.plot-header` node is recreated.
+	function measurePlotHeader(node: HTMLElement) {
+		data?.length;
+		const header = node.querySelector<HTMLElement>(".plot-header");
+		if (!header) return;
+		const measure = () => {
+			const mt = parseFloat(getComputedStyle(header).marginTop) || 0;
+			plotHeaderH = header.offsetHeight + mt;
+		};
+		measure();
+		const ro = new ResizeObserver(measure);
+		ro.observe(header);
+		return () => ro.disconnect();
+	}
 </script>
 
 <div class="scrollo-story" class:scrollo-dark={darkMode}>
@@ -116,12 +142,13 @@
 				bind:clientWidth={chartWidth}
 				bind:clientHeight={chartHeight}
 				style:--reveal={reveal.current}
+				{@attach measurePlotHeader}
 			>
 				{#if data?.length}
 					<Plot
 						marginRight={12}
 						subtitle="Percentage of reports that claim CBI for production volume"
-						height={chartHeight - 75}
+						height={chartHeight - plotHeaderH}
 						width={chartWidth}
 						grid
 						x={{
