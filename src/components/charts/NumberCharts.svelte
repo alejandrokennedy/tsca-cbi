@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Plot, Line } from "svelteplot";
+	import { Plot, Line, Pointer, Dot, RuleX, HTMLTooltip } from "svelteplot";
 	import consumerRaw from "$data/consumerData.csv";
 	import industryRaw from "$data/industryData.csv";
 
@@ -10,7 +10,7 @@
 		"*HBCD is a cluster of three chemicals, each with its own unique CAS number.";
 
 	// The dsv plugin returns string-valued rows (coercion now lives here, not in
-	// vite.config.js); cast `num` and add a `date` for the time axis.
+	// vite.config.js); cast `num`/`perc` and add a `date` for the time axis.
 	function toSeries(rows: any[]) {
 		return rows
 			.map((d) => ({
@@ -18,6 +18,7 @@
 				longName: d.longName.trim(),
 				year: +d.year,
 				num: +d.num,
+				perc: +d.perc,
 				date: new Date(+d.year, 0, 1)
 			}))
 			.sort((a, b) => a.name.localeCompare(b.name) || a.year - b.year);
@@ -25,6 +26,31 @@
 
 	const consumer = toSeries(consumerRaw);
 	const industry = toSeries(industryRaw);
+
+	// Explicit categorical color scale, shared by both panes. SveltePlot's
+	// default scheme (observable10) only has 10 colors, but we plot 11 chemicals,
+	// so two would otherwise collide. We pin the domain to the union of chemicals
+	// (sorted, so both panes color a given chemical identically) and extend the
+	// palette to 11 distinct colors — then reuse the same map for tooltip
+	// swatches, guaranteeing swatch = dot = line.
+	const PALETTE = [
+		"#4269d0",
+		"#efb118",
+		"#ff725c",
+		"#6cc5b0",
+		"#3ca951",
+		"#ff8ab7",
+		"#a463f2",
+		"#97bbf5",
+		"#9c6b4e",
+		"#9498a0",
+		"#1b7f79"
+	];
+	const chemicals = [
+		...new Set([...industry, ...consumer].map((d) => d.longName))
+	].sort();
+	const colorRange = chemicals.map((_, i) => PALETTE[i % PALETTE.length]);
+	const colorOf = new Map(chemicals.map((n, i) => [n, colorRange[i]]));
 
 	let rootW = $state(1024);
 	let isMobile = $derived(rootW <= MOBILE_BREAKPOINT);
@@ -95,9 +121,57 @@
 			label: "↑ Number of reports",
 			tickFormat: (d: number) => `${d}`
 		}}
-		color={{ legend: true }}
+		color={{ legend: true, domain: chemicals, range: colorRange }}
 	>
 		<Line {data} x="date" y="num" z="name" stroke="longName" strokeWidth={2} />
+
+		<!-- Hover marker. Pointer finds the single datum nearest the cursor — no
+		     `z`, so it searches one shared tree across every line (matching the
+		     tooltip below) — and renders SVG: a faint vertical rule at that year
+		     plus a dot on the line, colored by the same `longName` color scale. -->
+		<Pointer {data} x="date" y="num" maxDistance={25}>
+			{#snippet children({ data: hit })}
+				<RuleX data={hit} x="date" stroke="currentColor" strokeOpacity={0.25} />
+				<Dot
+					data={hit}
+					x="date"
+					y="num"
+					fill="longName"
+					stroke="var(--svelteplot-bg, white)"
+					strokeWidth={1.5}
+					r={4.5}
+				/>
+			{/snippet}
+		</Pointer>
+
+		<!-- The HTML tooltip box. SveltePlot requires it in the `overlay` snippet
+		     (an HTML layer over the SVG), not as a plain mark child. It runs its
+		     own nearest-point search (also ignoring `z`), so it stays in sync
+		     with the Pointer marker above. `datum` is `false` when nothing is
+		     hovered, so guard before reading its fields. -->
+		{#snippet overlay()}
+			<HTMLTooltip {data} x="date" y="num">
+				{#snippet children({ datum })}
+					{#if datum}
+						<div class="cbi-tooltip">
+							<div class="tt-name">
+								<span
+									class="tt-swatch"
+									style:background={colorOf.get(datum.longName)}
+								></span>
+								{datum.longName}
+							</div>
+							<div class="tt-row">
+								<span>{datum.year}</span>
+								<span class="tt-num">
+									{datum.num} reports ({datum.perc.toFixed(1)}%)
+								</span>
+							</div>
+						</div>
+					{/if}
+				{/snippet}
+			</HTMLTooltip>
+		{/snippet}
 	</Plot>
 {/snippet}
 
@@ -165,6 +239,14 @@
 		display: flex;
 		flex-direction: column;
 		min-height: 0;
+		/* A little vertical slack (with border-box so it shrinks the chart, not
+		   the pane) so the chart needn't be pixel-perfectly centered when
+		   scrolling — matters most on mobile where each pane is a full screen.
+		   padding-inline does the same horizontally; the SVG auto-sizes to the
+		   narrower figure width, so no viewBox scaling. */
+		box-sizing: border-box;
+		padding-block: 1.5rem;
+		padding-inline: 5rem;
 	}
 
 	/* chart-area is the only flexible child, so its measured height already
@@ -211,5 +293,46 @@
 	.charts:not(.mobile) :global(figure.svelteplot .color-legend) {
 		display: flex;
 		flex-direction: column;
+	}
+
+	/* Tooltip box. HTMLTooltip anchors its wrapper's top-left at the hovered
+	   point; this transform floats our box centered just above it. */
+	.cbi-tooltip {
+		transform: translate(-50%, calc(-100% - 12px));
+		background: #fff;
+		border: 1px solid rgba(0, 0, 0, 0.15);
+		border-radius: 4px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+		padding: 6px 9px;
+		font-size: 12px;
+		line-height: 1.3;
+		white-space: nowrap;
+	}
+
+	.tt-name {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-weight: 700;
+		margin-bottom: 2px;
+	}
+
+	/* Color chip matching this chemical's line/dot (same scale, see `colorOf`). */
+	.tt-swatch {
+		flex: none;
+		width: 10px;
+		height: 10px;
+		border-radius: 2px;
+	}
+
+	.tt-row {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.75em;
+		opacity: 0.85;
+	}
+
+	.tt-num {
+		font-variant-numeric: tabular-nums;
 	}
 </style>
