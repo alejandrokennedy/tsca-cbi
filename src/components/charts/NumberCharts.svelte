@@ -33,6 +33,9 @@
 	// (sorted, so both panes color a given chemical identically) and extend the
 	// palette to 11 distinct colors — then reuse the same map for tooltip
 	// swatches, guaranteeing swatch = dot = line.
+	// NB: pass this palette to the scale as `scheme`, NOT `range` — SveltePlot's
+	// categorical color scale ignores `range` and silently falls back to
+	// observable10 (which is exactly the 11th-chemical collision above).
 	const PALETTE = [
 		"#4269d0",
 		"#efb118",
@@ -121,7 +124,7 @@
 			label: "↑ Number of reports",
 			tickFormat: (d: number) => `${d}`
 		}}
-		color={{ legend: true, domain: chemicals, range: colorRange }}
+		color={{ legend: true, domain: chemicals, scheme: colorRange }}
 	>
 		<Line {data} x="date" y="num" z="name" stroke="longName" strokeWidth={2} />
 
@@ -150,7 +153,17 @@
 		     with the Pointer marker above. `datum` is `false` when nothing is
 		     hovered, so guard before reading its fields. -->
 		{#snippet overlay()}
-			<HTMLTooltip {data} x="date" y="num">
+			<!-- `y` is `num || 1e-9`, not plain "num", solely for the tooltip box's
+			     placement. SveltePlot positions HTMLTooltip with a truthiness guard
+			     (`tooltipY ? projectY(...) : 0`), so a literal y of 0 — our HBCD
+			     chemicals, which ride the chart's baseline — collapses `top` to 0:
+			     the box jumps to the top edge and is then clipped away by the
+			     chart-area's `overflow: hidden`, which is why those tooltips looked
+			     "broken." The epsilon is sub-pixel once projected (so the box still
+			     anchors to the baseline dot), and `datum` is the full row, so the
+			     displayed `num`/`perc` are the real 0s. (Pointer above is unaffected:
+			     it guards with `y != null`.) -->
+			<HTMLTooltip {data} x="date" y={(d: any) => d.num || 1e-9}>
 				{#snippet children({ datum })}
 					{#if datum}
 						<div class="cbi-tooltip">
@@ -177,9 +190,7 @@
 
 <div class="charts" class:mobile={isMobile} bind:clientWidth={rootW}>
 	<div class="pane">
-		<div class="chart-title">
-			Industry — number of CBI claims for TSCA top 10 chemicals
-		</div>
+		<div class="chart-title">Industry</div>
 		<div
 			class="chart-area"
 			bind:clientHeight={industryAreaH}
@@ -193,9 +204,7 @@
 	</div>
 
 	<div class="pane">
-		<div class="chart-title">
-			Consumer & commercial — number of CBI claims for TSCA top 10 chemicals
-		</div>
+		<div class="chart-title">Consumer & Commercial</div>
 		<div
 			class="chart-area"
 			bind:clientHeight={consumerAreaH}

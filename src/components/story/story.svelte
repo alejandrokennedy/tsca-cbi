@@ -2,7 +2,7 @@
 	import { footerState } from "$utils/footerState.svelte";
 	import RefreshCopy from "$components/helpers/RefreshCopy.svelte";
 	import ScrolloSteps from "$components/helpers/ScrolloSteps.svelte";
-	import { Plot, Line } from "svelteplot";
+	import { Plot, Line, Pointer, Dot, RuleX, HTMLTooltip } from "svelteplot";
 	import rawData from "$data/data.csv";
 	import { Tween, prefersReducedMotion } from "svelte/motion";
 	import { cubicInOut } from "svelte/easing";
@@ -21,20 +21,30 @@
 	const HEADER_H = { mobile: 48, desktop: 65 };
 	const FOOTER_H = 54.6;
 	const MOBILE_BREAKPOINT = 768;
-	// Previous scheme (ColorBrewer Dark2) — uncomment to revert:
-	// const COLORS = {
-	// 	consumerAll: "#1b9e77",
-	// 	industryAll: "#d95f02",
-	// 	consumerTop: "#7570b3",
-	// 	industryTop: "#e7298d"
-	// };
-	// Current scheme (Tableau 10):
 	const COLORS = {
-		consumerAll: "#4e79a7",
-		industryAll: "#f28e2b",
-		consumerTop: "#59a14f",
-		industryTop: "#e15759"
+		// consumerAll: "#4e79a7",
+		// industryAll: "#f28e2b",
+		// consumerTop: "#59a14f",
+		// industryTop: "#e15759"
+		consumerAll: "#4B8CE7",
+		industryAll: "#EB5C68",
+		consumerTop: "#364981",
+		industryTop: "#B31947"
 	};
+	// [
+	// 	"#a6cee3",
+	// 	"#1f78b4",
+	// 	"#b2df8a",
+	// 	"#33a02c",
+	// 	"#fb9a99",
+	// 	"#e31a1c",
+	// 	"#fdbf6f",
+	// 	"#ff7f00",
+	// 	"#cab2d6",
+	// 	"#6a3d9a",
+	// 	"#ffff99",
+	// 	"#b15928"
+	// ];
 
 	let width = $state(1024);
 	let height = $state(800);
@@ -206,8 +216,21 @@
 						}}
 						color={{
 							legend: true,
-							domain: visibleNames.map((n) => LONG[n]),
-							range: visibleNames.map((n) => COLORS[n])
+							// SveltePlot ignores `range` for categorical color scales —
+							// it only reads `scheme` (autoScales.js → autoScaleColor). A
+							// plain `{ label: color }` object IS a valid scheme: its keys
+							// become the domain, its values the range, so this sets the
+							// palette. (Passing `range` here silently fell back to the
+							// default observable10 scheme.)
+							scheme: Object.fromEntries(
+								visibleNames.map((n) => [LONG[n], COLORS[n]])
+							),
+							// Explicit domain in `COLORS` order. Without it, the scale
+							// derives its domain from the data and sorts it alphabetically
+							// (sortOrdinalDomains defaults true), which reshuffles the
+							// legend once all four series are present. An explicit ordinal
+							// domain is used verbatim, so series enter in COLORS order.
+							domain: visibleNames.map((n) => LONG[n])
 						}}
 					>
 						<Line
@@ -221,6 +244,58 @@
 							lineClass={(d) =>
 								!started || enteringNames.includes(d.name) ? "draw-in" : ""}
 						/>
+
+						<!-- Hover marker. Pointer finds the single datum nearest the
+						     cursor (no `z`, so one shared search tree across every
+						     visible line) and draws a faint year rule plus a dot on the
+						     line, colored via the same `LONG[name]` → color scale as the
+						     lines. `{data}` is the per-step subset, so only series visible
+						     at the current step are hoverable. -->
+						<Pointer {data} x="date" y="value" maxDistance={25}>
+							{#snippet children({ data: hit })}
+								<RuleX
+									data={hit}
+									x="date"
+									stroke="currentColor"
+									strokeOpacity={0.25}
+								/>
+								<Dot
+									data={hit}
+									x="date"
+									y="value"
+									fill={(d) => LONG[d.name]}
+									stroke="var(--svelteplot-bg, white)"
+									strokeWidth={1.5}
+									r={4.5}
+								/>
+							{/snippet}
+						</Pointer>
+
+						<!-- HTML tooltip box. SveltePlot requires it in the `overlay`
+						     snippet (an HTML layer over the SVG). It runs its own
+						     nearest-point search (also ignoring `z`), so it stays in sync
+						     with the Pointer marker. `datum` is `false` when nothing is
+						     hovered. Swatch + label are keyed off `name` via COLORS / LONG
+						     (the real color source of truth — the Plot `scheme`), so they
+						     match the line and dodge the CSV's untrimmed longName. -->
+						{#snippet overlay()}
+							<HTMLTooltip {data} x="date" y="value">
+								{#snippet children({ datum })}
+									{#if datum}
+										<div class="cbi-tooltip">
+											<div class="tt-name">
+												<span
+													class="tt-swatch"
+													style:background={COLORS[datum.name]}
+												></span>
+												{LONG[datum.name]}
+											</div>
+											<div class="tt-value">{datum.value.toFixed(1)}%</div>
+										</div>
+									{/if}
+								{/snippet}
+							</HTMLTooltip>
+						{/snippet}
 					</Plot>
 				{/if}
 			</div>
@@ -290,6 +365,43 @@
 	.chart-container :global(.draw-in path) {
 		stroke-dasharray: 4000;
 		stroke-dashoffset: calc(4000 * (1 - var(--reveal, 1)));
+	}
+
+	/* Tooltip box (mirrors NumberCharts.svelte). HTMLTooltip anchors its
+	   wrapper's top-left at the hovered point; this transform floats our box
+	   centered just above it. */
+	.cbi-tooltip {
+		transform: translate(-50%, calc(-100% - 12px));
+		background: #fff;
+		border: 1px solid rgba(0, 0, 0, 0.15);
+		border-radius: 4px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+		padding: 6px 9px;
+		font-size: 12px;
+		line-height: 1.3;
+		white-space: nowrap;
+		color: #000;
+	}
+
+	.tt-name {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-weight: 700;
+		margin-bottom: 2px;
+	}
+
+	/* Color chip matching this series' line/dot (same COLORS map). */
+	.tt-swatch {
+		flex: none;
+		width: 10px;
+		height: 10px;
+		border-radius: 2px;
+	}
+
+	.tt-value {
+		opacity: 0.85;
+		font-variant-numeric: tabular-nums;
 	}
 
 	/* Color legend. Two layers:
