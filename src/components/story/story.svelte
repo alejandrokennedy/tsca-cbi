@@ -264,7 +264,7 @@
 					<Plot
 						marginRight={12}
 						marginLeft={32}
-						subtitle="Percentage of reports that claim CBI for production volume"
+						subtitle="Percentage of reports that do not disclose production volumes due to CBI"
 						height={chartHeight - plotHeaderH}
 						width={chartWidth}
 						grid
