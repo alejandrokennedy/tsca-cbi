@@ -22,14 +22,78 @@
 	const FOOTER_H = 54.6;
 	const MOBILE_BREAKPOINT = 768;
 	const COLORS = {
+		// ── ACTIVE ── Teal / Amber (light on Top — swapped)
+		// consumerAll: "#15605a",
+		// industryAll: "#c75000",
+		// consumerTop: "#4fb0a5",
+		// industryTop: "#f4b860"
+
+		// To test a scheme below, comment out the 4 active lines above and
+		// uncomment one block. Key order must stay consumerAll, industryAll,
+		// consumerTop, industryTop.
+
+		// ───── Light-on-Top variants (light tone = "Top" series; swap the
+		//   consumerAll/consumerTop and industryAll/industryTop pairs to flip) ─────
+
+		// ── Blue / Orange (ColorBrewer, colorblind-safe) ──
+		// consumerAll: "#08519c",
+		// industryAll: "#a63603",
+		// consumerTop: "#6baed6",
+		// industryTop: "#fd8d3c"
+
+		// ── Teal / Amber ──  (same as active)
+		// consumerAll: "#15605a",
+		// industryAll: "#c75000",
+		// consumerTop: "#4fb0a5",
+		// industryTop: "#f4b860"
+
+		// ── Purple / Green ──
+		// consumerAll: "#54278f",
+		// industryAll: "#006d2c",
+		// consumerTop: "#9e9ac8",
+		// industryTop: "#74c476"
+
+		// ───── Comparable-brightness pairs (no light/dark split within a pair;
+		//   consumer = cool duo, industry = warm duo, so the pairing is gentler
+		//   but all four sit at similar brightness) ─────
+
+		// ── Temperature duo, saturated — blue + teal / coral + raspberry ──
+		consumerAll: "#3e92cc",
+		industryAll: "#ff785a",
+		consumerTop: "#2ec4b6",
+		industryTop: "#e84a75"
+
+		// ── Temperature duo, muted — dusty blue + sage / terracotta + dusty rose ──
+		// consumerAll: "#5a8fbb",
+		// industryAll: "#d98c5f",
+		// consumerTop: "#6ba89a",
+		// industryTop: "#cc6a8a"
+
+		// ───── Original light/dark schemes (light tone = "All" series) ─────
+
+		// ── Blue / Red (original first active) ──
+		// consumerAll: "#4B8CE7",
+		// industryAll: "#EB5C68",
+		// consumerTop: "#364981",
+		// industryTop: "#B31947"
+
+		// ── Tableau (original) — blue / orange / green / red (not hue-paired) ──
 		// consumerAll: "#4e79a7",
 		// industryAll: "#f28e2b",
 		// consumerTop: "#59a14f",
 		// industryTop: "#e15759"
-		consumerAll: "#4B8CE7",
-		industryAll: "#EB5C68",
-		consumerTop: "#364981",
-		industryTop: "#B31947"
+
+		// ── Teal / Rose ──
+		// consumerAll: "#4fb0a5",
+		// industryAll: "#e8779e",
+		// consumerTop: "#15605a",
+		// industryTop: "#9b1b5a"
+
+		// ── Steel-blue / Sienna (muted, editorial) ──
+		// consumerAll: "#7ba0c4",
+		// industryAll: "#e59866",
+		// consumerTop: "#2e4c6d",
+		// industryTop: "#a04000"
 	};
 	// [
 	// 	"#a6cee3",
@@ -345,8 +409,8 @@
 	}
 
 	.chart-container {
-		width: 92%;
-		height: 100%;
+		width: 82%;
+		height: 96%;
 		margin: 0 auto;
 		font-family: Helvetica, Arial, sans-serif;
 	}
@@ -432,6 +496,12 @@
 		}
 		to {
 			opacity: 1;
+		}
+	}
+
+	@media (max-width: 768px) {
+		.chart-container {
+			width: 96%;
 		}
 	}
 

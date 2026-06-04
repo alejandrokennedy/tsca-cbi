@@ -4,10 +4,12 @@
 	import industryRaw from "$data/industryData.csv";
 
 	const MOBILE_BREAKPOINT = 768;
+	// Sticky site header height (mirrors story.svelte's HEADER_H). Subtracted
+	// from the 100dvh panes below so a "full screen" chart fits *under* the
+	// header instead of overflowing it.
+	const HEADER_H = { mobile: 48, desktop: 65 };
 	const Y_MAX = 70;
 	const LEGEND_GAP = 16; // px between chart and right-side legend (desktop)
-	const HBCD_NOTE =
-		"*HBCD is a cluster of three chemicals, each with its own unique CAS number.";
 
 	// The dsv plugin returns string-valued rows (coercion now lives here, not in
 	// vite.config.js); cast `num`/`perc` and add a `date` for the time axis.
@@ -57,9 +59,10 @@
 
 	let rootW = $state(1024);
 	let isMobile = $derived(rootW <= MOBILE_BREAKPOINT);
+	let headerH = $derived(isMobile ? HEADER_H.mobile : HEADER_H.desktop);
 
-	// Per-pane chart-area height (flexbox sizes it; the title/footnote are
-	// siblings, so this already excludes them). We don't track its width —
+	// Per-pane chart-area height (flexbox sizes it; the title is a sibling, so
+	// this already excludes it). We don't track its width —
 	// SveltePlot auto-sizes the SVG to the figure via its own clientWidth bind,
 	// and passing a narrower `width` prop desyncs the viewBox and scales the
 	// drawing down. Instead we reserve room for the legend with `marginRight`.
@@ -111,7 +114,7 @@
 
 <!-- The "function that turns a dataset into a chart": one line per chemical,
      x = year, y = num. Minimal — grid, axes, right/top color legend. The title
-     and footnote are rendered by the pane (see below), not by Plot. -->
+     is rendered by the pane (see below), not by Plot. -->
 {#snippet chart(data: any[], height: number, marginRight: number)}
 	<Plot
 		{height}
@@ -188,7 +191,12 @@
 	</Plot>
 {/snippet}
 
-<div class="charts" class:mobile={isMobile} bind:clientWidth={rootW}>
+<div
+	class="charts"
+	class:mobile={isMobile}
+	bind:clientWidth={rootW}
+	style:--header-h={`${headerH}px`}
+>
 	<div class="pane">
 		<div class="chart-title">Industry</div>
 		<div
@@ -200,7 +208,6 @@
 		>
 			{@render chart(industry, industryHeight, industryMarginRight)}
 		</div>
-		<p class="chart-footnote">{HBCD_NOTE}</p>
 	</div>
 
 	<div class="pane">
@@ -214,7 +221,6 @@
 		>
 			{@render chart(consumer, consumerHeight, consumerMarginRight)}
 		</div>
-		<p class="chart-footnote">{HBCD_NOTE}</p>
 	</div>
 </div>
 
@@ -228,9 +234,9 @@
 		font-family: Helvetica, Arial, sans-serif;
 	}
 
-	/* Desktop: both charts share one screen. */
+	/* Desktop: both charts share one screen, minus the sticky header. */
 	.charts:not(.mobile) {
-		height: 100dvh;
+		height: calc(100dvh - var(--header-h));
 	}
 
 	.charts:not(.mobile) .pane {
@@ -239,9 +245,11 @@
 	}
 
 	/* Mobile: one chart per screen — 11 swatches + two charts is too cramped
-	   stacked, so each pane gets its own viewport and the page scrolls. */
+	   stacked, so each pane gets its own viewport (minus the sticky header) and
+	   the page scrolls. Full-bleed horizontally to maximize the cramped width. */
 	.charts.mobile .pane {
-		height: 100dvh;
+		height: calc(100dvh - var(--header-h));
+		padding-inline: 0rem;
 	}
 
 	.pane {
@@ -259,7 +267,7 @@
 	}
 
 	/* chart-area is the only flexible child, so its measured height already
-	   excludes the title + footnote — the SVG sizes straight to it. */
+	   excludes the title — the SVG sizes straight to it. */
 	.chart-area {
 		flex: 1 1 0;
 		min-height: 0;
@@ -268,19 +276,13 @@
 
 	/* Matches SveltePlot's default <h3> subtitle look (the style story.svelte
 	   now mirrors); kept as our own element so the legend can sit beside the
-	   chart while the title stays top-left. */
+	   chart. Centered above the chart. */
 	.chart-title {
 		margin: 0;
-		font-size: 1.17em;
+		font-size: 15px;
 		font-weight: 700;
 		line-height: 1.2;
-	}
-
-	.chart-footnote {
-		margin: 0 0 0.25rem;
-		font-size: 11px;
-		font-style: italic;
-		opacity: 0.7;
+		/*text-align: center;*/
 	}
 
 	/* Desktop: the SVG keeps the figure's full width (so its viewBox matches and
