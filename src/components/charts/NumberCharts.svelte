@@ -262,7 +262,7 @@
 		   padding-inline does the same horizontally; the SVG auto-sizes to the
 		   narrower figure width, so no viewBox scaling. */
 		box-sizing: border-box;
-		padding-block: 1.5rem;
+		padding-block: 0.7rem;
 		padding-inline: 5rem;
 	}
 
