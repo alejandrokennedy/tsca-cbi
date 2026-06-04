@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { footerState } from "$utils/footerState.svelte";
 	import { Plot, Line, Pointer, Dot, RuleX, HTMLTooltip } from "svelteplot";
 	import consumerRaw from "$data/consumerData.csv";
 	import industryRaw from "$data/industryData.csv";
@@ -8,6 +9,7 @@
 	// from the 100dvh panes below so a "full screen" chart fits *under* the
 	// header instead of overflowing it.
 	const HEADER_H = { mobile: 48, desktop: 65 };
+	const FOOTER_H = 54.6;
 	const Y_MAX = 70;
 	const LEGEND_GAP = 16; // px between chart and right-side legend (desktop)
 
@@ -60,6 +62,7 @@
 	let rootW = $state(1024);
 	let isMobile = $derived(rootW <= MOBILE_BREAKPOINT);
 	let headerH = $derived(isMobile ? HEADER_H.mobile : HEADER_H.desktop);
+	let footerH = $derived(footerState.visible ? FOOTER_H : 0);
 
 	// Per-pane chart-area height (flexbox sizes it; the title is a sibling, so
 	// this already excludes it). We don't track its width —
@@ -110,6 +113,11 @@
 			return () => ro.disconnect();
 		};
 	}
+
+	$inspect("footerH", footerH);
+	$inspect("footerState.visible", footerState.visible);
+	console.log("footerH", footerH);
+	console.log("footerState.visible", footerState.visible);
 </script>
 
 <!-- The "function that turns a dataset into a chart": one line per chemical,
@@ -195,7 +203,7 @@
 	class="charts"
 	class:mobile={isMobile}
 	bind:clientWidth={rootW}
-	style:--header-h={`${headerH}px`}
+	style:--header-h={`${headerH}px - ${footerH}px`}
 >
 	<div class="pane">
 		<div class="chart-title">Industry</div>
@@ -229,19 +237,20 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
-		padding: 0.5rem;
+		padding: 0rem 0.5rem;
 		box-sizing: border-box;
 		font-family: Helvetica, Arial, sans-serif;
 	}
 
 	/* Desktop: both charts share one screen, minus the sticky header. */
 	.charts:not(.mobile) {
-		height: calc(100dvh - var(--header-h));
+		height: calc(95dvh - var(--header-h));
 	}
 
 	.charts:not(.mobile) .pane {
 		flex: 1 1 0;
-		min-height: 0;
+		min-height: 400px;
+		max-height: 700px;
 	}
 
 	/* Mobile: one chart per screen — 11 swatches + two charts is too cramped
@@ -262,7 +271,7 @@
 		   padding-inline does the same horizontally; the SVG auto-sizes to the
 		   narrower figure width, so no viewBox scaling. */
 		box-sizing: border-box;
-		padding-block: 0.7rem;
+		/*padding-block: 0.7rem;*/
 		padding-inline: 5rem;
 	}
 

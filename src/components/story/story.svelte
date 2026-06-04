@@ -139,6 +139,11 @@
 		sortedData.map((d) => [d.name, d.longName.trim()])
 	);
 
+	$inspect("footerH", footerH);
+	$inspect("footerState.visible", footerState.visible);
+	console.log("footerH", footerH);
+	console.log("footerState.visible", footerState.visible);
+
 	// Which series are visible at a given step. Single source of truth for both
 	// the data filter and the entrance animation below.
 	function namesForStep(s: number | null) {
@@ -264,7 +269,7 @@
 					<Plot
 						marginRight={12}
 						marginLeft={32}
-						subtitle="Percentage of reports that do not disclose production volumes due to CBI"
+						subtitle="Percentage of TSCA CDR reports that claim CBI for production volume"
 						height={chartHeight - plotHeaderH}
 						width={chartWidth}
 						grid
