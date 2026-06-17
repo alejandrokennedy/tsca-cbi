@@ -116,8 +116,8 @@
 
 	$inspect("footerH", footerH);
 	$inspect("footerState.visible", footerState.visible);
-	console.log("footerH", footerH);
-	console.log("footerState.visible", footerState.visible);
+	// console.log("footerH", footerH);
+	// console.log("footerState.visible", footerState.visible);
 </script>
 
 <!-- The "function that turns a dataset into a chart": one line per chemical,
@@ -249,7 +249,7 @@
 
 	.charts:not(.mobile) .pane {
 		flex: 1 1 0;
-		min-height: 400px;
+		min-height: 300px;
 		max-height: 700px;
 	}
 

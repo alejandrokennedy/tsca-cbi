@@ -12,11 +12,15 @@ $effect.root(() => {
 	};
 
 	const checkForBar = () => {
-		const container = document.querySelector("#cen-main-metered-bar");
+		// Anchor on #article-meter only. The outer wrapper's id varies by
+		// environment: live serves #cen-main-metered-bar, but AEM preview leaks
+		// template whitespace into the attribute (id="cen-main-meter\n  ed-bar"),
+		// so an exact "#cen-main-metered-bar" match returns null there. #article-meter
+		// has a clean id in both, so it's the reliable hook.
 		const bar = document.querySelector("#article-meter");
-		const newCloseButton = document.querySelector("#article-meter .btn-close");
+		const newCloseButton = bar?.querySelector(".btn-close");
 
-		if (container && bar && !footerState.visible && !userClosed) {
+		if (bar && !footerState.visible && !userClosed) {
 			footerState.visible = true; // Mutate the property
 			if (observer) {
 				observer.disconnect();

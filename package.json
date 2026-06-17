@@ -6,6 +6,8 @@
 		"style": "node tasks/style-dictionary.js",
 		"dev": "vite dev",
 		"build": "vite build",
+		"convert:aem": "tsx tasks/convert-svelte.ts",
+		"build:aem": "vite build && tsx tasks/convert-svelte.ts",
 		"preview": "vite preview",
 		"lint": "prettier --check --plugin-search-dir=. .",
 		"format": "prettier --write --plugin-search-dir=. .",
