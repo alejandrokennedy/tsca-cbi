@@ -8,6 +8,8 @@
 		"build": "vite build",
 		"convert:aem": "tsx tasks/convert-svelte.ts",
 		"build:aem": "vite build && tsx tasks/convert-svelte.ts",
+		"upload:aem": "tsx --env-file=.env tasks/push-aem.ts",
+		"push:aem": "vite build && tsx tasks/convert-svelte.ts && tsx --env-file=.env tasks/push-aem.ts",
 		"preview": "vite preview",
 		"lint": "prettier --check --plugin-search-dir=. .",
 		"format": "prettier --write --plugin-search-dir=. .",
@@ -16,6 +18,7 @@
 		"clean": "rm -rf .sda-cache .tmp"
 	},
 	"devDependencies": {
+		"@adobe/aem-upload": "^2.0.5",
 		"@lucide/svelte": "^0.575.0",
 		"@rollup/plugin-dsv": "^3.0.5",
 		"@sveltejs/adapter-cloudflare": "^7.2.6",
