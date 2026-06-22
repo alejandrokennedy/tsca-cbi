@@ -11,7 +11,7 @@
 
 <svelte:boundary onerror={(e) => console.error(e)}>
 	<StoryContainer>
-		<!-- <Story {copy} /> -->
+		<Story {copy} />
 		<NumberCharts />
 		<!-- <Story {copy} darkMode /> -->
 	</StoryContainer>
