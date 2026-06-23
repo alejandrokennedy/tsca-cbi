@@ -139,6 +139,20 @@
 		sortedData.map((d) => [d.name, d.longName.trim()])
 	);
 
+	// x-axis (year) extent — used to flip the tooltip near the left/right edges.
+	const yearMin = Math.min(...sortedData.map((d) => d.year));
+	const yearMax = Math.max(...sortedData.map((d) => d.year));
+
+	// Edge-aware tooltip transform. HTMLTooltip anchors our box's origin at the
+	// hovered point; this floats it centered-above by default, but flips it below
+	// when the point is near the top (xFrac/yFrac are 0..1 within the data extent)
+	// and left/right-aligns it near the horizontal edges, so it never clips.
+	function tipTransform(xFrac: number, yFrac: number) {
+		const ty = yFrac > 0.8 ? "12px" : "calc(-100% - 12px)";
+		const tx = xFrac < 0.12 ? "0%" : xFrac > 0.88 ? "-100%" : "-50%";
+		return `translate(${tx}, ${ty})`;
+	}
+
 	$inspect("footerH", footerH);
 	$inspect("footerState.visible", footerState.visible);
 	console.log("footerH", footerH);
@@ -351,7 +365,13 @@
 							<HTMLTooltip {data} x="date" y="value">
 								{#snippet children({ datum })}
 									{#if datum}
-										<div class="cbi-tooltip">
+										<div
+											class="cbi-tooltip"
+											style:transform={tipTransform(
+												(datum.year - yearMin) / (yearMax - yearMin),
+												datum.value / yDomain.current[1]
+											)}
+										>
 											<div class="tt-name">
 												<span
 													class="tt-swatch"
@@ -437,10 +457,10 @@
 	}
 
 	/* Tooltip box (mirrors NumberCharts.svelte). HTMLTooltip anchors its
-	   wrapper's top-left at the hovered point; this transform floats our box
-	   centered just above it. */
+	   wrapper's top-left at the hovered point; the `transform` is set inline (see
+	   tipTransform) so it can flip away from the top/left/right edges instead of
+	   clipping. */
 	.cbi-tooltip {
-		transform: translate(-50%, calc(-100% - 12px));
 		background: #fff;
 		border: 1px solid rgba(0, 0, 0, 0.15);
 		border-radius: 4px;

@@ -10,6 +10,12 @@
 	// header instead of overflowing it.
 	const HEADER_H = { mobile: 48, desktop: 65 };
 	const FOOTER_H = 54.6;
+	// Height of the title rendered by AEM (the CMS hosting this Svelte component),
+	// which sits *above* this component. Reserve room for it — folded into
+	// --header-h below — so the title + chart(s) fit together on screen: desktop
+	// subtracts it from the 95dvh figure that stacks both panes, mobile from each
+	// 100dvh full-screen pane.
+	const AEM_TITLE_H = 100;
 	const Y_MAX = 70;
 	const LEGEND_GAP = 16; // px between chart and right-side legend (desktop)
 
@@ -58,6 +64,22 @@
 	].sort();
 	const colorRange = chemicals.map((_, i) => PALETTE[i % PALETTE.length]);
 	const colorOf = new Map(chemicals.map((n, i) => [n, colorRange[i]]));
+
+	// x-axis (year) extent across both panes — used to flip the tooltip near the
+	// left/right edges.
+	const allYears = [...industry, ...consumer].map((d) => d.year);
+	const yearMin = Math.min(...allYears);
+	const yearMax = Math.max(...allYears);
+
+	// Edge-aware tooltip transform. HTMLTooltip anchors our box's origin at the
+	// hovered point; this floats it centered-above by default, but flips it below
+	// when the point is near the top (xFrac/yFrac are 0..1 within the data extent)
+	// and left/right-aligns it near the horizontal edges, so it never clips.
+	function tipTransform(xFrac: number, yFrac: number) {
+		const ty = yFrac > 0.8 ? "12px" : "calc(-100% - 12px)";
+		const tx = xFrac < 0.12 ? "0%" : xFrac > 0.88 ? "-100%" : "-50%";
+		return `translate(${tx}, ${ty})`;
+	}
 
 	let rootW = $state(1024);
 	let isMobile = $derived(rootW <= MOBILE_BREAKPOINT);
@@ -177,7 +199,13 @@
 			<HTMLTooltip {data} x="date" y={(d: any) => d.num || 1e-9}>
 				{#snippet children({ datum })}
 					{#if datum}
-						<div class="cbi-tooltip">
+						<div
+							class="cbi-tooltip"
+							style:transform={tipTransform(
+								(datum.year - yearMin) / (yearMax - yearMin),
+								datum.num / Y_MAX
+							)}
+						>
 							<div class="tt-name">
 								<span
 									class="tt-swatch"
@@ -203,7 +231,7 @@
 	class="charts"
 	class:mobile={isMobile}
 	bind:clientWidth={rootW}
-	style:--header-h={`${headerH}px - ${footerH}px`}
+	style:--header-h={`${headerH}px - ${footerH}px - ${AEM_TITLE_H}px`}
 >
 	<div class="pane">
 		<div class="chart-title">Industry</div>
@@ -316,9 +344,9 @@
 	}
 
 	/* Tooltip box. HTMLTooltip anchors its wrapper's top-left at the hovered
-	   point; this transform floats our box centered just above it. */
+	   point; the `transform` is set inline (see tipTransform) so it can flip
+	   away from the top/left/right edges instead of clipping. */
 	.cbi-tooltip {
-		transform: translate(-50%, calc(-100% - 12px));
 		background: #fff;
 		border: 1px solid rgba(0, 0, 0, 0.15);
 		border-radius: 4px;

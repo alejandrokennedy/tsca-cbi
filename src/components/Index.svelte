@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { getContext } from "svelte";
 	import StoryContainer from "./story/StoryContainer.svelte";
-	import Story from "./story/Story.svelte";
-	import NumberCharts from "$components/charts/NumberCharts.svelte";
+	// import Story from "./story/Story.svelte";
+	// import NumberCharts from "$components/charts/NumberCharts.svelte";
 	import ProductionVolumes from "$components/charts/ProductionVolumes.svelte";
-	import DummyFooter from "$components/DummyFooter.svelte";
+	// import DummyFooter from "$components/DummyFooter.svelte";
 
 	const copy = getContext("copy");
 	const data = getContext("data");
@@ -12,8 +12,8 @@
 
 <svelte:boundary onerror={(e) => console.error(e)}>
 	<StoryContainer>
-		<Story {copy} />
-		<NumberCharts />
+		<!-- <Story {copy} /> -->
+		<!-- <NumberCharts /> -->
 		<ProductionVolumes />
 		<!-- <Story {copy} darkMode /> -->
 	</StoryContainer>
