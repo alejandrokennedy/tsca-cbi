@@ -1,0 +1,145 @@
+year,volume,category,chemical
+2012,1114361.659,reported,1-Bromopropane
+2013,2108555.669,reported,1-Bromopropane
+2014,2922218.795,reported,1-Bromopropane
+2015,4776033.965,reported,1-Bromopropane
+2016,103857.3541,reported,1-Bromopropane
+2017,0,reported,1-Bromopropane
+2018,0,reported,1-Bromopropane
+2019,0,reported,1-Bromopropane
+2020,55984.25125,reported,1-Bromopropane
+2021,59983.12634,reported,1-Bromopropane
+2022,71907.17675,reported,1-Bromopropane
+2023,0,reported,1-Bromopropane
+2012,4535923.7,low,1-Bromopropane
+2013,4535923.7,low,1-Bromopropane
+2014,4535923.7,low,1-Bromopropane
+2015,4535923.7,low,1-Bromopropane
+2016,453592.37,low,1-Bromopropane
+2017,4535923.7,low,1-Bromopropane
+2018,4535923.7,low,1-Bromopropane
+2019,4535923.7,low,1-Bromopropane
+2020,4535923.7,low,1-Bromopropane
+2021,4535923.7,low,1-Bromopropane
+2022,4535923.7,low,1-Bromopropane
+2023,4535923.7,low,1-Bromopropane
+2012,22679618.5,high,1-Bromopropane
+2013,22679618.5,high,1-Bromopropane
+2014,22679618.5,high,1-Bromopropane
+2015,22679618.5,high,1-Bromopropane
+2016,9071847.4,high,1-Bromopropane
+2017,22679618.5,high,1-Bromopropane
+2018,22679618.5,high,1-Bromopropane
+2019,22679618.5,high,1-Bromopropane
+2020,11339809.25,high,1-Bromopropane
+2021,22679618.5,high,1-Bromopropane
+2022,22679618.5,high,1-Bromopropane
+2023,22679618.5,high,1-Bromopropane
+2012,316463.3931,reported,"1,4-Dioxane"
+2013,343268.1971,reported,"1,4-Dioxane"
+2014,335169.066,reported,"1,4-Dioxane"
+2015,274455.4617,reported,"1,4-Dioxane"
+2016,20003.44731,reported,"1,4-Dioxane"
+2017,380862.9152,reported,"1,4-Dioxane"
+2018,123527.8642,reported,"1,4-Dioxane"
+2019,206249.6031,reported,"1,4-Dioxane"
+2020,160000.3629,reported,"1,4-Dioxane"
+2021,271478.0779,reported,"1,4-Dioxane"
+2022,441997.2603,reported,"1,4-Dioxane"
+2023,140049.5323,reported,"1,4-Dioxane"
+2012,0,low,"1,4-Dioxane"
+2013,453592.37,low,"1,4-Dioxane"
+2014,45359.24,low,"1,4-Dioxane"
+2015,453592.37,low,"1,4-Dioxane"
+2016,0,low,"1,4-Dioxane"
+2017,453592.37,low,"1,4-Dioxane"
+2018,453592.37,low,"1,4-Dioxane"
+2019,45359.24,low,"1,4-Dioxane"
+2020,113398.09,low,"1,4-Dioxane"
+2021,113398.09,low,"1,4-Dioxane"
+2022,113398.09,low,"1,4-Dioxane"
+2023,34019.43,low,"1,4-Dioxane"
+2012,453592.37,high,"1,4-Dioxane"
+2013,9071847.4,high,"1,4-Dioxane"
+2014,226796.18,high,"1,4-Dioxane"
+2015,9071847.4,high,"1,4-Dioxane"
+2016,453592.37,high,"1,4-Dioxane"
+2017,4535923.7,high,"1,4-Dioxane"
+2018,9071847.4,high,"1,4-Dioxane"
+2019,226796.18,high,"1,4-Dioxane"
+2020,181436.95,high,"1,4-Dioxane"
+2021,181436.95,high,"1,4-Dioxane"
+2022,181436.95,high,"1,4-Dioxane"
+2023,45359.24,high,"1,4-Dioxane"
+2012,2706700.474,reported,Methylene chloride
+2013,3055225.844,reported,Methylene chloride
+2014,3613145.123,reported,Methylene chloride
+2015,2954494.652,reported,Methylene chloride
+2016,7745898.613,reported,Methylene chloride
+2017,3303095.318,reported,Methylene chloride
+2018,5756744.927,reported,Methylene chloride
+2019,3977851.512,reported,Methylene chloride
+2020,2360779.635,reported,Methylene chloride
+2021,1787699.467,reported,Methylene chloride
+2022,1359125.836,reported,Methylene chloride
+2023,2278248.406,reported,Methylene chloride
+2012,45359237,low,Methylene chloride
+2013,45359237,low,Methylene chloride
+2014,45359237,low,Methylene chloride
+2015,113398092.5,low,Methylene chloride
+2016,45359237,low,Methylene chloride
+2017,45359237,low,Methylene chloride
+2018,113398092.5,low,Methylene chloride
+2019,45359237,low,Methylene chloride
+2020,45359237,low,Methylene chloride
+2021,45359237,low,Methylene chloride
+2022,45359237,low,Methylene chloride
+2023,45359237,low,Methylene chloride
+2012,113398092.5,high,Methylene chloride
+2013,113398092.5,high,Methylene chloride
+2014,113398092.5,high,Methylene chloride
+2015,226796185,high,Methylene chloride
+2016,113398092.5,high,Methylene chloride
+2017,113398092.5,high,Methylene chloride
+2018,226796185,high,Methylene chloride
+2019,113398092.5,high,Methylene chloride
+2020,113398092.5,high,Methylene chloride
+2021,113398092.5,high,Methylene chloride
+2022,113398092.5,high,Methylene chloride
+2023,113398092.5,high,Methylene chloride
+2012,1158489.898,reported,N-methylpyrrolidone (NMP)
+2013,1740209.197,reported,N-methylpyrrolidone (NMP)
+2014,2818393.192,reported,N-methylpyrrolidone (NMP)
+2015,4262947.81,reported,N-methylpyrrolidone (NMP)
+2016,7964473.696,reported,N-methylpyrrolidone (NMP)
+2017,4503881.395,reported,N-methylpyrrolidone (NMP)
+2018,5463126.525,reported,N-methylpyrrolidone (NMP)
+2019,4383527.32,reported,N-methylpyrrolidone (NMP)
+2020,3669616.986,reported,N-methylpyrrolidone (NMP)
+2021,5552205.822,reported,N-methylpyrrolidone (NMP)
+2022,4913781.967,reported,N-methylpyrrolidone (NMP)
+2023,3364935.907,reported,N-methylpyrrolidone (NMP)
+2012,45359237,low,N-methylpyrrolidone (NMP)
+2013,45359237,low,N-methylpyrrolidone (NMP)
+2014,45359237,low,N-methylpyrrolidone (NMP)
+2015,45359237,low,N-methylpyrrolidone (NMP)
+2016,45359237,low,N-methylpyrrolidone (NMP)
+2017,45359237,low,N-methylpyrrolidone (NMP)
+2018,45359237,low,N-methylpyrrolidone (NMP)
+2019,45359237,low,N-methylpyrrolidone (NMP)
+2020,45359237,low,N-methylpyrrolidone (NMP)
+2021,45359237,low,N-methylpyrrolidone (NMP)
+2022,45359237,low,N-methylpyrrolidone (NMP)
+2023,45359237,low,N-methylpyrrolidone (NMP)
+2012,113398092.5,high,N-methylpyrrolidone (NMP)
+2013,113398092.5,high,N-methylpyrrolidone (NMP)
+2014,113398092.5,high,N-methylpyrrolidone (NMP)
+2015,113398092.5,high,N-methylpyrrolidone (NMP)
+2016,113398092.5,high,N-methylpyrrolidone (NMP)
+2017,113398092.5,high,N-methylpyrrolidone (NMP)
+2018,113398092.5,high,N-methylpyrrolidone (NMP)
+2019,113398092.5,high,N-methylpyrrolidone (NMP)
+2020,113398092.5,high,N-methylpyrrolidone (NMP)
+2021,113398092.5,high,N-methylpyrrolidone (NMP)
+2022,113398092.5,high,N-methylpyrrolidone (NMP)
+2023,113398092.5,high,N-methylpyrrolidone (NMP)

@@ -5,13 +5,14 @@ wide CSVs into one tidy/long CSV: year,volume,category,chemical.
 Categories per chemical-year: reported, low, high.
 Ordering: chemical -> category (reported, low, high) -> year ascending.
 """
+
 import csv
 from pathlib import Path
 
 HERE = Path(__file__).parent
 PROD = HERE / "nationally-aggregated-production-volume.csv"
 USE = HERE / "chemical-reported-use_industry-plus-consumer.csv"
-OUT = HERE / "six-chemicals-production-volumes.csv"
+OUT = HERE / "four-chemicals-production-volumes.csv"
 
 YEARS = [str(y) for y in range(2012, 2024)]
 CATEGORY_ORDER = ["reported", "low", "high"]
