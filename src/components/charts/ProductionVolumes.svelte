@@ -64,8 +64,10 @@
 	const BAND_COLOR = "#9498a0"; // shaded low→high band
 	const RANGE_LINE_COLOR = "#ccc"; // the low & high bound lines
 	// The reported-use line, pulled out as its own variable so it's easy to swap.
-	const REPORTED_COLOR = "#E92458";
+	const REPORTED_COLOR = "#FF2D65";
+	// const REPORTED_COLOR = "#E92458";
 	// const REPORTED_COLOR = "#3066BE";
+	// const REPORTED_COLOR = "#05668D";
 	const AVG_COLOR = "#999"; // the average-estimate line + its hover dot/swatch
 
 	// Categorical color scale — the single source of truth shared by the lines,
@@ -84,9 +86,9 @@
 	const colorOf = new Map(CATEGORIES.map((c, i) => [c, CAT_COLORS[i]]));
 	const CAT_LABEL: Record<VolumeRow["category"], string> = {
 		reported: "Reported use (industry + consumer)",
-		low: "Est. production volume — low",
-		high: "Est. production volume — high",
-		average: "Est. production volume — midpoint"
+		low: "Nationally aggregated production volume — low",
+		high: "Nationally aggregated production volume — high",
+		average: "Nationally aggregated production volume — midpoint"
 	};
 
 	// Legend line entries. The low & high bounds share one gray color, so they
@@ -94,7 +96,10 @@
 	// tooltip, which names the specific bound hovered).
 	const LEGEND = [
 		{ color: REPORTED_COLOR, label: CAT_LABEL.reported },
-		{ color: RANGE_LINE_COLOR, label: "Est. production volume low/high bounds" }
+		{
+			color: RANGE_LINE_COLOR,
+			label: "Nationally aggregated production volume low/high bounds"
+		}
 	];
 
 	// Compact y-axis ticks (e.g. 226M instead of 226,796,185) so the free,
@@ -300,7 +305,7 @@
 		{#if SHOW_AVERAGE}
 			<span class="key">
 				<span class="swatch line dashed" style:color={AVG_COLOR}></span>
-				Est. production volume — midpoint
+				Nationally aggregated production volume — midpoint
 			</span>
 		{/if}
 		<span class="key">

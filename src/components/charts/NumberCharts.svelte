@@ -3,6 +3,7 @@
 	import { Plot, Line, Pointer, Dot, RuleX, HTMLTooltip } from "svelteplot";
 	import consumerRaw from "$data/consumerData.csv";
 	import industryRaw from "$data/industryData.csv";
+	import fourChemicalsRaw from "$data/four-chemicals-production-volumes.csv";
 
 	const MOBILE_BREAKPOINT = 768;
 	// Sticky site header height (mirrors story.svelte's HEADER_H). Subtracted
@@ -37,6 +38,33 @@
 	const consumer = toSeries(consumerRaw);
 	const industry = toSeries(industryRaw);
 
+	// The four chemicals highlighted by the production-volumes story. We derive
+	// the list from that CSV's `chemical` column (so this stays in sync if the
+	// CSV changes) rather than hard-coding it. One name differs between datasets:
+	// the CSV calls it "Methylene chloride" while consumer/industry data use its
+	// synonym "Dichloromethane" (same compound, CH2Cl2), so we alias it here.
+	const CHEMICAL_ALIASES: Record<string, string> = {
+		"Methylene chloride": "Dichloromethane"
+	};
+	const FILTER_CHEMICALS = new Set(
+		fourChemicalsRaw.map((d: any) => CHEMICAL_ALIASES[d.chemical] ?? d.chemical)
+	);
+
+	// Toggle: `false` plots every chemical (the existing full dataset), `true`
+	// restricts both panes to just the four chemicals above.
+	let SHOW_FILTERED = $state(true);
+
+	const consumerFiltered = consumer.filter((d) =>
+		FILTER_CHEMICALS.has(d.longName)
+	);
+	const industryFiltered = industry.filter((d) =>
+		FILTER_CHEMICALS.has(d.longName)
+	);
+
+	// The dataset actually fed to each pane's chart, switched by SHOW_FILTERED.
+	let consumerData = $derived(SHOW_FILTERED ? consumerFiltered : consumer);
+	let industryData = $derived(SHOW_FILTERED ? industryFiltered : industry);
+
 	// Explicit categorical color scale, shared by both panes. SveltePlot's
 	// default scheme (observable10) only has 10 colors, but we plot 11 chemicals,
 	// so two would otherwise collide. We pin the domain to the union of chemicals
@@ -64,6 +92,17 @@
 	].sort();
 	const colorRange = chemicals.map((_, i) => PALETTE[i % PALETTE.length]);
 	const colorOf = new Map(chemicals.map((n, i) => [n, colorRange[i]]));
+
+	// The color domain/scheme handed to <Plot>. When filtering, we narrow both to
+	// just the displayed chemicals so the legend isn't padded with absent ones —
+	// pulling each color from `colorOf` keeps every chemical the exact same hue it
+	// has in the full view.
+	let activeChemicals = $derived(
+		SHOW_FILTERED ? chemicals.filter((n) => FILTER_CHEMICALS.has(n)) : chemicals
+	);
+	let activeColors = $derived(
+		activeChemicals.map((n) => colorOf.get(n) as string)
+	);
 
 	// x-axis (year) extent across both panes — used to flip the tooltip near the
 	// left/right edges.
@@ -157,7 +196,7 @@
 			label: "↑ Number of reports",
 			tickFormat: (d: number) => `${d}`
 		}}
-		color={{ legend: true, domain: chemicals, scheme: colorRange }}
+		color={{ legend: true, domain: activeChemicals, scheme: activeColors }}
 	>
 		<Line {data} x="date" y="num" z="name" stroke="longName" strokeWidth={2} />
 
@@ -242,7 +281,7 @@
 				(w, h) => ((industryLegendW = w), (industryLegendH = h))
 			)}
 		>
-			{@render chart(industry, industryHeight, industryMarginRight)}
+			{@render chart(industryData, industryHeight, industryMarginRight)}
 		</div>
 	</div>
 
@@ -255,7 +294,7 @@
 				(w, h) => ((consumerLegendW = w), (consumerLegendH = h))
 			)}
 		>
-			{@render chart(consumer, consumerHeight, consumerMarginRight)}
+			{@render chart(consumerData, consumerHeight, consumerMarginRight)}
 		</div>
 	</div>
 </div>
