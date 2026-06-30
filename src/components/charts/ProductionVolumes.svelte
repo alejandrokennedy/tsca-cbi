@@ -7,7 +7,7 @@
 		Pointer,
 		Dot,
 		RuleX,
-		Contour,
+		// Contour, // shading (grayscale contour bands) disabled — solid AreaY band used instead
 		HTMLTooltip
 	} from "svelteplot";
 	import { autoType, format } from "d3";
@@ -52,7 +52,8 @@
 	// Sticky site header height (mirrors story.svelte's HEADER_H). Subtracted
 	// from the 100dvh panes below so a "full screen" chart fits *under* the
 	// header instead of overflowing it.
-	const HEADER_H = { mobile: 48, desktop: 65 };
+	const PROG_BAR_H = 52;
+	const HEADER_H = { mobile: 48, desktop: 65 + PROG_BAR_H };
 	const FOOTER_H = 54.6;
 	// Height of the title rendered by AEM (the CMS hosting this Svelte component),
 	// which sits *above* this component. Reserve room for it — folded into
@@ -191,6 +192,9 @@
 	// lines exactly; the innermost hugs the average. Grayscale, lightest outside →
 	// darkest inside. (fill="value" would route through the plot's color scale, but
 	// that scale is the categorical line palette — so we set explicit grays here.)
+	/* SHADING DISABLED — grayscale contour bands and their multi-shade legend
+	   swatch. Replaced by the solid AreaY low→high band (kept below) plus a single
+	   solid legend swatch. Left here, commented, so the shading is easy to restore.
 	const CONTOUR_BAND_COUNT = 3;
 	const CONTOUR_BANDS = Array.from({ length: CONTOUR_BAND_COUNT }, (_, k) => {
 		const t = k / CONTOUR_BAND_COUNT; // closeness threshold: 0 (outer) … →1 (inner)
@@ -212,6 +216,7 @@
 		(c, i) =>
 			`${c} ${(i / SHADE_STRIPES.length) * 100}% ${((i + 1) / SHADE_STRIPES.length) * 100}%`
 	).join(", ")})`;
+	*/
 	// ──────────────────────────────────────────────────────────────────────────
 
 	// x-axis (year) extent, shared by every panel — used to flip the tooltip near
@@ -225,14 +230,16 @@
 	// Date objects, not timestamps: the contour registers x1/x2 into the plot's
 	// x-scale domain, and a numeric value there makes SveltePlot infer a linear
 	// (raw-millisecond) axis instead of a time (year) axis.
-	const X_MIN_DATE = new Date(yearMin, 0, 1);
-	const X_MAX_DATE = new Date(yearMax, 0, 1);
+	// SHADING DISABLED — contour x-bounds (only fed the removed Contour sampler):
+	// const X_MIN_DATE = new Date(yearMin, 0, 1);
+	// const X_MAX_DATE = new Date(yearMax, 0, 1);
 
 	// Continuous (avg, half-width) of the low→high band at an arbitrary x (a
 	// timestamp), linearly interpolated between the discrete yearly band rows.
 	// The contour scalar field is closeness to the average,
 	// 1 − |y − avg(x)| / half(x): 1 on the average line, 0 on the low/high bounds
 	// (computed at the call site). `band` is already sorted year-ascending.
+	/* SHADING DISABLED — sampler field for the contour bands (no longer rendered):
 	function bandFieldAt(
 		band: BandRow[],
 		x: number
@@ -257,6 +264,7 @@
 		}
 		return { avg: last.avg, half: (last.high - last.low) / 2 };
 	}
+	*/
 
 	// Edge-aware tooltip transform. HTMLTooltip anchors our box's origin at the
 	// hovered point; this floats it centered-above by default, but flips it below
@@ -284,99 +292,100 @@
 	// and the page scrolls, so `rows` only matters on desktop.
 	let cols = $derived(isMobile ? 2 : panels.length <= 4 ? 2 : 3);
 	let rows = $derived(Math.ceil(panels.length / cols));
+	console.log(panels);
 </script>
 
-<div
-	class="chart"
-	class:mobile={isMobile}
-	bind:clientWidth={rootW}
-	style:--header-h={`${headerH}px - ${footerH}px - ${AEM_TITLE_H}px`}
->
-	<!-- <div class="chart-title">Production Volumes by Chemical</div> -->
+<div class="chart-container" class:mobile={isMobile}>
+	<div
+		class="chart"
+		class:mobile={isMobile}
+		bind:clientWidth={rootW}
+		style:--header-h={`${headerH}px - ${footerH}px - ${AEM_TITLE_H}px`}
+	>
+		<!-- <div class="chart-title">Production Volumes by Chemical</div> -->
 
-	<!-- Shared key: the three line series + the shaded band. -->
-	<div class="legend">
-		{#each LEGEND as entry (entry.label)}
+		<!-- Shared key: the three line series + the shaded band. -->
+		<div class="legend">
+			{#each LEGEND as entry (entry.label)}
+				<span class="key">
+					<span class="swatch line" style:background={entry.color}></span>
+					{entry.label}
+				</span>
+			{/each}
+			{#if SHOW_AVERAGE}
+				<span class="key">
+					<span class="swatch line dashed" style:color={AVG_COLOR}></span>
+					Nationally aggregated production volume — midpoint
+				</span>
+			{/if}
 			<span class="key">
-				<span class="swatch line" style:background={entry.color}></span>
-				{entry.label}
+				<span class="swatch band" style:background={BAND_COLOR}></span>
+				Shaded = low–high range
 			</span>
-		{/each}
-		{#if SHOW_AVERAGE}
-			<span class="key">
-				<span class="swatch line dashed" style:color={AVG_COLOR}></span>
-				Nationally aggregated production volume — midpoint
-			</span>
-		{/if}
-		<span class="key">
-			<span class="swatch shades" style:background={SHADE_SWATCH}></span>
-			Shaded = low–high range
-		</span>
-		<!-- <span class="key">
+			<!-- <span class="key">
 			<span class="swatch band" style:background={GAP_COLOR} style:opacity={0.5}
 			></span>
 			Reported-to-average gap
 		</span> -->
-	</div>
+		</div>
 
-	<div class="grid" style:--cols={cols} style:--rows={rows}>
-		{#each panels as panel, i (panel.chemical)}
-			<div class="panel">
-				<div class="panel-title">{panel.chemical}</div>
-				<div class="chart-area" bind:clientHeight={panelH[i]}>
-					<!-- Only render once the cell is measured tall enough: a 0/tiny
+		<div class="grid" style:--cols={cols} style:--rows={rows}>
+			{#each panels as panel, i (panel.chemical)}
+				<div class="panel">
+					<div class="panel-title">{panel.chemical}</div>
+					<div class="panel-body">
+						<!-- Per-chart y-axis label, rotated CCW 90°, centered on the chart. -->
+						<div class="y-axis-label">Production volume (kg) →</div>
+						<div class="chart-area" bind:clientHeight={panelH[i]}>
+							<!-- Only render once the cell is measured tall enough: a 0/tiny
 					     height yields a negative plot-body height and SveltePlot throws
 					     `<rect height="-…">`. -->
-					{#if (panelH[i] ?? 0) >= 80}
-						<Plot
-							height={panelH[i]}
-							marginLeft={40}
-							marginRight={18}
-							grid
-							x={{ label: null }}
-							y={{
-								tickFormat: fmtTick,
-								zero: true,
-								...(ABSOLUTE_SCALE ? { domain: [0, globalMax] } : {})
-							}}
-							color={{ domain: [...CATEGORIES], scheme: CAT_COLORS }}
-						>
-							<!-- y={{ type: "log" }} -->
-							<AreaY
-								data={panel.band}
-								x="date"
-								y1="low"
-								y2="high"
-								fill={BAND_COLOR}
-								fillOpacity={0.18}
-							/>
-							<!-- Filled grayscale contour bands around the average.
-						     Function-sampling mode: no data, the closeness field is
-						     sampled on a pixel grid mapped onto
-						     [X_MIN_TS, X_MAX_TS] × [panel.max, 0] (the plot's own x/y
-						     domain, since zero:true and no nice → exact overlay). One
-						     filled Contour per band, outermost (lightest, touching the
-						     low/high lines) first so painter's order nests them, darkest
-						     hugging the average. -->
-							{#each CONTOUR_BANDS as band (band.t)}
-								<Contour
-									x1={X_MIN_DATE as unknown as number}
-									x2={X_MAX_DATE as unknown as number}
-									y1={ABSOLUTE_SCALE ? globalMax : panel.max}
-									y2={0}
-									value={(x, y) => {
-										// x arrives as a Date (the sampler interpolates the
-										// Date-valued x bounds); coerce to a timestamp.
-										const { avg, half } = bandFieldAt(panel.band, +x);
-										return half > 0 ? 1 - Math.abs(y - avg) / half : -999;
+							{#if (panelH[i] ?? 0) >= 80}
+								<Plot
+									height={panelH[i]}
+									marginLeft={40}
+									marginRight={12}
+									grid
+									x={{ label: null }}
+									y={{
+										// label: "Production volume (kg)",
+										label: null,
+										tickFormat: fmtTick,
+										zero: true,
+										...(ABSOLUTE_SCALE ? { domain: [0, globalMax] } : {})
 									}}
-									thresholds={[band.t]}
-									fill={band.fill}
-								/>
-							{/each}
-							<!-- Teal gap: the spread between reported use and the average
+									color={{ domain: [...CATEGORIES], scheme: CAT_COLORS }}
+								>
+									<!-- y={{ type: "log" }} -->
+									<AreaY
+										data={panel.band}
+										x="date"
+										y1="low"
+										y2="high"
+										fill={BAND_COLOR}
+										fillOpacity={0.18}
+									/>
+									<!-- Shaded area under the reported (volume) line, 0 -> reported.
+									     Uses panel.band's per-year `reported` field (one value per date) --
+									     NOT panel.rows, which is long-format with every category stacked, so
+									     AreaY would build one self-crossing path across the low/high values
+									     and smear fill over the panel. Drawn before the lines so it sits
+									     underneath them. -->
+									<!-- <AreaY
+									data={panel.band}
+									x="date"
+									y="reported"
+									fill={REPORTED_COLOR}
+									fillOpacity={0.18}
+								/> -->
+									<!-- SHADING DISABLED — the grayscale contour bands that used to
+							     layer over the band were removed; the solid AreaY low→high
+							     band above is shown instead. Their source (CONTOUR_BANDS,
+							     bandFieldAt, X_MIN/MAX_DATE) is commented out in the script;
+							     see git history (commit b579512) to reinstate. -->
+									<!-- Teal gap: the spread between reported use and the average
 						     estimate. Drawn after the bands so it stays visible on top. -->
-							<!-- <AreaY
+									<!-- <AreaY
 								data={panel.band}
 								x="date"
 								y1="reported"
@@ -384,61 +393,63 @@
 								fill={GAP_COLOR}
 								fillOpacity={0.1}
 							/> -->
-							<!-- Optional dashed midpoint between the low/high bounds. -->
-							{#if SHOW_AVERAGE}
-								<Line
-									data={panel.band}
-									x="date"
-									y="avg"
-									stroke={AVG_COLOR}
-									strokeWidth={2}
-									strokeDasharray="4,3"
-								/>
-							{/if}
-							<!-- Three lines (reported / low / high) from the long data,
+									<!-- Optional dashed midpoint between the low/high bounds. -->
+									{#if SHOW_AVERAGE}
+										<Line
+											data={panel.band}
+											x="date"
+											y="avg"
+											stroke={AVG_COLOR}
+											strokeWidth={2}
+											strokeDasharray="4,3"
+										/>
+									{/if}
+									<!-- Three lines (reported / low / high) from the long data,
 						     grouped + colored by category via the shared scale. -->
-							<Line
-								data={panel.rows}
-								x="date"
-								y="volume"
-								z="category"
-								strokeWidth={(d) => (d.category === "reported" ? 2 : 1.5)}
-								stroke={(d) =>
-									d.category === "reported" ? REPORTED_COLOR : RANGE_LINE_COLOR}
-							/>
-							<!-- strokeWidth={2} -->
+									<Line
+										data={panel.rows}
+										x="date"
+										y="volume"
+										z="category"
+										strokeWidth={(d) => (d.category === "reported" ? 2 : 1.5)}
+										stroke={(d) =>
+											d.category === "reported"
+												? REPORTED_COLOR
+												: RANGE_LINE_COLOR}
+									/>
+									<!-- strokeWidth={2} -->
 
-							<!-- Hover marker. Pointer finds the single datum nearest the
+									<!-- Hover marker. Pointer finds the single datum nearest the
 						     cursor — no `z`, so it searches one shared tree across all
 						     four series (reported/low/high + the synthetic average,
 						     matching the tooltip) — and draws a faint rule at that year
 						     plus a dot on the line, colored by the same category scale. -->
-							<Pointer
-								data={panel.hoverRows}
-								x="date"
-								y="volume"
-								maxDistance={25}
-							>
-								{#snippet children({ data: hit })}
-									<RuleX
-										data={hit}
-										x="date"
-										stroke="currentColor"
-										strokeOpacity={0.25}
-									/>
-									<Dot
-										data={hit}
+									<Pointer
+										data={panel.hoverRows}
 										x="date"
 										y="volume"
-										fill="category"
-										stroke="var(--svelteplot-bg, white)"
-										strokeWidth={1.5}
-										r={4.5}
-									/>
-								{/snippet}
-							</Pointer>
+										maxDistance={25}
+									>
+										{#snippet children({ data: hit })}
+											<RuleX
+												data={hit}
+												x="date"
+												stroke="currentColor"
+												strokeOpacity={0.25}
+											/>
+											<Dot
+												data={hit}
+												x="date"
+												y="volume"
+												fill="category"
+												stroke="var(--svelteplot-bg, white)"
+												strokeWidth={1.5}
+												r={4.5}
+											/>
+										{/snippet}
+									</Pointer>
 
-							<!-- HTML tooltip box, required in the `overlay` snippet. It runs
+									<!-- HTML tooltip box, required in the `overlay` snippet. It runs
 						     its own nearest-point search (also ignoring `z`), staying in
 						     sync with the Pointer above. `y` uses `volume || 1e-9` only
 						     for box *placement*: SveltePlot guards tooltipY with
@@ -447,57 +458,79 @@
 						     `overflow: hidden`. The epsilon is sub-pixel once projected;
 						     `datum` is the full row, so the displayed value is the real 0.
 						     (See svelteplot-htmltooltip-zero-bug memory.) -->
-							{#snippet overlay()}
-								<HTMLTooltip
-									data={panel.hoverRows}
-									x="date"
-									y={(d: VolumeRow) => d.volume || 1e-9}
-								>
-									{#snippet children({ datum })}
-										{#if datum}
-											<div
-												class="cbi-tooltip"
-												style:transform={tipTransform(
-													(datum.year - yearMin) / (yearMax - yearMin),
-													datum.volume /
-														(ABSOLUTE_SCALE ? globalMax : panel.max)
-												)}
-											>
-												<div class="tt-name">
-													<span
-														class="tt-swatch"
-														style:background={colorOf.get(datum.category)}
-													></span>
-													{CAT_LABEL[datum.category as VolumeRow["category"]]}
-												</div>
-												<div class="tt-row">
-													<span>{datum.year}</span>
-													<span class="tt-num">{fmtFull(datum.volume)} kg</span>
-												</div>
-											</div>
-										{/if}
+									{#snippet overlay()}
+										<HTMLTooltip
+											data={panel.hoverRows}
+											x="date"
+											y={(d: VolumeRow) => d.volume || 1e-9}
+										>
+											{#snippet children({ datum })}
+												{#if datum}
+													<div
+														class="cbi-tooltip"
+														style:transform={tipTransform(
+															(datum.year - yearMin) / (yearMax - yearMin),
+															datum.volume /
+																(ABSOLUTE_SCALE ? globalMax : panel.max)
+														)}
+													>
+														<div class="tt-name">
+															<span
+																class="tt-swatch"
+																style:background={colorOf.get(datum.category)}
+															></span>
+															{CAT_LABEL[
+																datum.category as VolumeRow["category"]
+															]}
+														</div>
+														<div class="tt-row">
+															<span>{datum.year}</span>
+															<span class="tt-num"
+																>{fmtFull(datum.volume)} kg</span
+															>
+														</div>
+													</div>
+												{/if}
+											{/snippet}
+										</HTMLTooltip>
 									{/snippet}
-								</HTMLTooltip>
-							{/snippet}
-						</Plot>
-					{/if}
+								</Plot>
+							{/if}
+						</div>
+					</div>
 				</div>
-			</div>
-		{/each}
+			{/each}
+		</div>
 	</div>
 </div>
 
 <style>
+	.chart-container {
+		width: 98%;
+		margin: 0 auto;
+	}
+
+	.chart-container:not(.mobile) {
+		width: 92%;
+	}
+
 	.chart {
 		display: flex;
 		flex-direction: column;
-		padding: 0rem 0.5rem;
+		/*padding: 0rem 0.5rem;*/
 		box-sizing: border-box;
 		font-family: Helvetica, Arial, sans-serif;
 	}
 
 	.chart:not(.mobile) {
 		height: calc(95dvh - var(--header-h));
+	}
+
+	/* Mobile: cap the chart to the screen minus the sticky header + AEM title so
+	   the whole grid sits under the header instead of running beneath it. The grid
+	   flexes within this bounded height (see .chart.mobile .grid below). */
+	.chart.mobile {
+		height: calc(100dvh - var(--header-h));
 	}
 
 	.chart-title {
@@ -547,14 +580,34 @@
 		opacity: 0.4;
 	}
 
-	/* Multi-shade band swatch: full opacity (the gradient already holds the real
-	   band colors) with a hairline border so the near-white outer stripes read
-	   against the legend background. */
+	/* SHADING DISABLED — multi-shade band swatch (paired with the removed contour
+	   bands). The solid `.swatch.band` above is used instead.
 	.swatch.shades {
-		width: 21px; /* 1.5× the base 14px swatch width */
+		width: 21px;
 		height: 12px;
 		border: 1px solid rgba(0, 0, 0, 0.15);
 		border-radius: 2px;
+	}
+	*/
+
+	/* Per-chart y-axis label, rotated counterclockwise 90° (reads bottom-to-top) and
+	   centered against its chart's height. `vertical-rl` + `rotate(180deg)` gives the
+	   CCW orientation with the widest browser support. */
+	.y-axis-label {
+		flex: none;
+		align-self: center;
+		writing-mode: vertical-rl;
+		transform: rotate(180deg);
+		text-align: center;
+		white-space: nowrap;
+		/* Match SveltePlot's built-in axis title. */
+		font-family: Helvetica, Arial, sans-serif;
+		font-size: 11px;
+		height: auto;
+		opacity: 0.8;
+		color: rgb(0, 0, 0);
+		/* 2px of space between the label and the charts. */
+		margin-right: 2px;
 	}
 
 	/* Small multiples. Column/row counts come from --cols/--rows (set inline,
@@ -563,22 +616,23 @@
 	.grid {
 		flex: 1 1 0;
 		min-height: 0;
+		min-width: 0;
 		display: grid;
 		gap: 0.5rem 1rem;
 		grid-template-columns: repeat(var(--cols), 1fr);
 		grid-template-rows: repeat(var(--rows), 1fr);
 	}
 
-	/* Mobile: the .chart has no fixed height (each panel is read on its own as
-	   the page scrolls), so the grid can't flex against a container height —
-	   that collapses every cell to ~0 and SveltePlot throws on the negative
-	   plot height. Instead give the rows an explicit viewport-relative height
-	   and let the grid grow past the screen (the page scrolls). */
+	/* Mobile: the grid flexes within .chart's bounded height (calc(100dvh -
+	   header) above) and divides it into equal rows, so the whole grid fits on
+	   screen under the header. (The cells can't collapse to the SveltePlot
+	   negative-height bug because .chart now has a definite height and the
+	   {#if panelH >= 80} gate blocks rendering until a cell is tall enough.) */
 	.chart.mobile .grid {
-		flex: none;
+		flex: 1 1 0;
 		grid-template-columns: repeat(var(--cols), 1fr);
-		grid-template-rows: none;
-		grid-auto-rows: 42dvh;
+		grid-template-rows: repeat(var(--rows), 1fr);
+		grid-auto-rows: auto;
 		gap: 0.5rem 0.1rem;
 	}
 
@@ -597,9 +651,18 @@
 		line-height: 1.2;
 	}
 
+	/* Row inside each panel: the rotated per-chart y-axis label + the chart. */
+	.panel-body {
+		flex: 1 1 0;
+		min-height: 0;
+		min-width: 0;
+		display: flex;
+	}
+
 	.chart-area {
 		flex: 1 1 0;
 		min-height: 0;
+		min-width: 0;
 		overflow: hidden;
 	}
 

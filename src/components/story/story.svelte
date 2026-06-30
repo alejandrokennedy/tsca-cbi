@@ -18,7 +18,8 @@
 	let copy = $state(initialCopy);
 	const DOC_ID = "1mbL3p0m0cB_DvTG8dcJBj_5LViudc4LyZyAaRdY3Og0";
 
-	const HEADER_H = { mobile: 48, desktop: 65 };
+	const PROG_BAR_H = 52;
+	const HEADER_H = { mobile: 48, desktop: 65 + PROG_BAR_H };
 	const FOOTER_H = 54.6;
 	const MOBILE_BREAKPOINT = 768;
 	const COLORS = {
@@ -283,7 +284,8 @@
 					<Plot
 						marginRight={12}
 						marginLeft={32}
-						subtitle="Percentage of TSCA CDR reports that claim CBI for production volume"
+						title="Confidential chemicals"
+						subtitle="Companies withhold their yearly production volume more often when the substance is on the list of 10 chemicals that the US Environmental Protection Agency has prioritized for review under the Toxic Substances Control Act."
 						height={chartHeight - plotHeaderH}
 						width={chartWidth}
 						grid
@@ -434,7 +436,7 @@
 	}
 
 	.chart-container {
-		width: 82%;
+		width: 84%;
 		height: 96%;
 		margin: 0 auto;
 		font-family: Helvetica, Arial, sans-serif;
@@ -444,6 +446,12 @@
 	   styles `:where(.scrollo-story) h3` at 28px in the serif --font-body; this
 	   overrides it back to the clean sans-serif default (NumberCharts.svelte). */
 	.chart-container :global(.plot-header h3) {
+		font-family: Helvetica, Arial, sans-serif;
+		font-size: 0.8em;
+		/*font-weight: 700;*/
+	}
+
+	.chart-container :global(.plot-header h2) {
 		font-family: Helvetica, Arial, sans-serif;
 		font-size: 1.17em;
 		font-weight: 700;

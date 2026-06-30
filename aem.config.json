@@ -1,5 +1,5 @@
 {
-	"name": "svelte-tsca-cbi-volume",
+	"name": "svelte-tsca-cbi-1",
 	"damBase": "/content/dam/cen/static/code/tsca-cbi",
-	"mode": "static"
+	"mode": "scrolly"
 }
